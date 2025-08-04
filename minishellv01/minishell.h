@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 12:49:19 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/04 13:18:27 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/04 17:42:59 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ char	*ft_itoa(int n);
 int is_builtin(char **tab, t_all **all);
 // int is_builtin2(char **tab, t_all **all);
 char **ft_remove_double_tab(char *str, char **tab);
+void	ft_shlvl(t_all **all);
 
 
 //exec_pipe.c  

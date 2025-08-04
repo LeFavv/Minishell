@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 11:38:30 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/04 15:09:30 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/04 17:42:55 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,14 +126,7 @@ char **create_default_env(void)
     str = ft_strjoin("PWD=", cwd); // non free
     tab = ft_add_double_tab(str, tab);
     tab = ft_add_double_tab("_=/usr/bin/env", tab);
-    // tab = ft_add_double_tab("HOME=/local/user", tab);
-    // tab = ft_add_double_tab("PATH=/home/vafavard/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin", tab);
-    // int i = 0;
-    // while (tab[i])
-    // {
-    //     printf("%s\n", tab[i]);
-    //     i++;
-    // }
+	tab = ft_add_double_tab("SHLVL=1", tab);
     return (tab);
 }
 
@@ -144,16 +137,21 @@ int main(int argc, char **argv, char **env)
 	t_all *all;
 	char *str;
 
+	// ft_shlvl(&all);
+	printf("salut minishell\n");
 	if (argc == 1)
 	{
 		all = malloc(sizeof(t_all));
 		// all->env = env;
 		if (env[0])
+		{
         	all->env = env;
+			ft_shlvl(&all);
+		}
     	else
     	{
    	    	// printf("je suis ici\n");
-        	all->env = create_default_env();
+        	all->env = create_default_env();			
    	 	}
 		while (1)
 		{
@@ -208,7 +206,8 @@ int main(int argc, char **argv, char **env)
 
 			//Execution
 			ft_open_pipe(all->t_cmd);
-			ft_exec_commande(all->t_cmd, all->t_red, all,env);
+			// ft_exec_commande(all->t_cmd, all->t_red, all,env);
+			ft_exec_commande(all->t_cmd, all->t_red, all,all->env);
 			ft_waitpid(all->t_cmd);
 			ft_close_pipe(all->t_cmd);
 

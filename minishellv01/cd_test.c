@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 11:29:24 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/04 14:50:22 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/04 17:41:48 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,52 @@ int	ft_export(char **tab, t_all **all)
     return (1);
 }
 
-//return vaue unset = 0 a chaque fois ??
+int ft_atoi(char *str)
+{
+	int i = 0;
+	int sign = 1;
+	int nb = 0;
+
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-' || str[i] =='+')
+	{
+		if (str[i] == '-')
+			sign *= -1;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		nb = nb * 10 + (str[i] - '0');
+		i++;
+	}
+	return (nb * sign);
+}
+
+void ft_shlvl(t_all **all)
+{
+    int i = 0;
+    char *equal_pos;
+    int nb = 0;
+
+    while ((*all)->env[i])
+    {
+        if (ft_strncmp((*all)->env[i], "SHLVL=", 6) == 0)
+        {
+            equal_pos = ft_strchr((*all)->env[i], '=');
+            if (equal_pos && (equal_pos + 1))
+            {
+                nb = ft_atoi(equal_pos + 1);
+				nb++;
+                (*all)->env = ft_replace_double_tab("SHLVL", ft_itoa(nb), (*all)->env);
+            }
+            break;
+        }
+        i++;
+    }
+	printf("\n\n%d\n\n", nb);
+}
+
+//return value unset = 0 a chaque fois ??
 int	ft_unset(char **tab, t_all **all)
 {
     int i = 1;
@@ -166,7 +211,7 @@ int is_builtin_2(char **tab, t_all **all)
 	{
 		return (ft_unset(tab, all));
 	}
-	 if (ft_strcmp(tab[0], "env") == 0)
+	 if (ft_strcmp(tab[0], "env") == 0 && !tab[1])
 	{
 		ft_env(all);
 		return (1);
