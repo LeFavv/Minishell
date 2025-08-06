@@ -40,7 +40,7 @@ void	ft_print(t_list *lst)
 		while (i < size)
 		{
 			// printf("%d:%s:%d:%d\n", i,lst->str, lst->state, lst->redir);
-			printf("%d:%s:%d\n", i,lst->str, lst->state);
+			printf("%d:%s:%d:%zu\n", i,lst->str, lst->state, ft_strlen(lst->str));
 			// printf("%d:'%s'\n", i,lst->str);
 			lst = lst->next;
 			i++;

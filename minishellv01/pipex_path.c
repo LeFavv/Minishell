@@ -61,6 +61,8 @@ char	*check_path(char **tab, char **cmd)
 	char	*temp2;
 
 	i = 0;
+	if (!tab || !cmd || !cmd[0] || !cmd[0][0])
+		return (NULL);
 	while (tab[i])
 	{
 		temp = ft_strjoin(tab[i], "/");
@@ -101,6 +103,8 @@ int	exec2(char **tab, char **env)
 	char	**envpath;
 	char	*path;
 
+	if (!tab || !tab[0] || !tab[0][0])
+		return (ft_free_double_tab(tab), -1);
 	str = get_path(env);
 	if (str)
 	{
@@ -126,13 +130,21 @@ int	exec(char **tab, char **env)
 	// tab = ft_split(arg, ' ');
 	// if (!tab)
 		// return (-1);
-	if (!tab[0])
+	int stats;
+	struct stat buf;
+
+	if (!tab || !tab[0] || !tab[0][0])
 		return (ft_free_double_tab(tab), -1);
 	if (tab[0][0] == '/' || (tab[0][0] == '.' && tab[0][1] == '/'))
 	{
+		stats = stat(tab[0], &buf);
+		if (stats == 0 && S_ISDIR(buf.st_mode))
+			return (ft_err(tab[0], "Is a directory"),  exit(126), -1);
+		if (access(tab[0], F_OK) == 0 && access(tab[0], X_OK) == -1)
+			return (ft_err(tab[0], "Permission denied"),  exit(126), -1);
 		if (access(tab[0], X_OK) == -1)
 			return (ft_err(tab[0], "No such file or directory"), 
-				/*ft_free_double_tab(tab),*/ -1);
+				/*ft_free_double_tab(tab),*/ /*exit(126), */-1);
 		if (execve(tab[0], tab, env) == -1)
 			return (ft_err(tab[0], "No such file or directory"), exit(126), /*ft_free_double_tab(tab),*/ -1);
 		return (/*ft_free_double_tab(tab), */0);

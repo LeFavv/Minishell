@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 11:29:24 by vafavard          #+#    #+#             */
-/*   Updated: 2025/07/30 15:38:50 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:22:58 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,6 @@
 
 #define PATH_MAX	4096
 
-// size_t	ft_strlen(const char *str)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (str[i] != '\0')
-// 	{
-// 		i++;
-// 	}
-// 	return (i);
-// }
-
 int ft_strcmp(char *s1, char *s2)
 {
 	int i = 0;
@@ -43,6 +31,34 @@ int ft_strcmp(char *s1, char *s2)
 	while(s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
 	return (s1[i] - s2[i]);
+}
+
+char **replace_env_var(char **env, const char *name, const char *value)
+{
+	int i = 0;
+	int len = ft_strlen(name);
+	char *new_var;
+	// Supprime l'ancienne variable
+	while (env && env[i])
+	{
+		if (ft_strncmp(env[i], (char*)name, len) == 0 && env[i][len] == '=')
+		{
+			free(env[i]);
+			int j = i;
+			while (env[j])
+			{
+				env[j] = env[j + 1];
+				j++;
+			}
+			break;
+		}
+		i++;
+	}
+	new_var = ft_strjoin(name, value);
+	if (!new_var)
+		return env;
+	env = ft_add_double_tab(new_var, env);
+	return env;
 }
 
 // int is_builtin_2(char **tab)
@@ -72,17 +88,6 @@ int ft_strcmp(char *s1, char *s2)
 
 int is_pwd(char *str)
 {
-	// int i = 0;
-
-	// while (str[i])
-	// {
-	//     if (str[0] == 'p'
-	//         && str[1] == 'w'
-	//             && str[2] == 'd'
-	//                 && !str[3])
-	//         return (1);
-	//     return (0);
-	// }
 	if (ft_strcmp(str, "pwd") == 0)
 		return (1);
 	return (0);
@@ -106,102 +111,86 @@ int is_cd(char *str)
 }
 int is_home(char *str)
 {
-	// char *compare;
-	// int i = 0;
-	
-	// compare = malloc(sizeof(char) * 12);//faire juste un strcomp
-	// if (!compare)
-	// 	return (0);
-	// compare = "/user/local";
-	// compare[12] = '\0';
-	// if (str[0] == '~' && !str[1])
-	// 	return (free(compare), 1);
-	// if (ft_strlen(compare) != ft_strlen(str))
-	// 	return (free(compare), 0);
-	// while (compare[i])
-	// {
-	// 	if (compare[i] == str[i])
-	// 		i++;
-	// 	break;
-	// }
-	// if (compare[i] == '\0')
-	// 	return (free(compare), 1);
-	// else
-	// 	return (free(compare), 0);
 	if (ft_strcmp(str, "/user/local") == 0)
 		return (1);
 	return (0);
-	
 }
 
-int	cd_home(void)
-{
-	int fd[2];
-	pipe(fd);
-	char cwd[PATH_MAX];
-	pid_t pid = fork();
-	const char *path;
+// int	cd_home(t_all **all)//donner la structure pour pouvoir mettre le OLDPWD dans le tableau d'env
+// {
+// 	char *path = get_env_var("HOME", (*all)->env);
+// 	char		*copy;	
+	
+// 		// path = get_env_var("HOME", (*all)->env);
+// 		copy = ft_strdup(path);
+// 		//faire protection
+// 		if (!chdir(path))
+// 			return (0);
+// 		char *copy_2 = ft_strjoin("OLDPWD=", "copy");
+// 		(*all)->env = ft_add_double_tab(copy_2, (*all)->env);
+// 		char cwd[PATH_MAX];
+// 		char *test = getcwd(cwd, sizeof(cwd));
 		
-	if (pid == 0)
+// 		printf("Apres cd = %s\n", test);
+// 	return (0);
+// }
+
+int	cd_home(t_all **all)
+{
+	char *path = get_env_var("HOME", (*all)->env);
+	if (!path)
 	{
-		close(fd[0]);
-		path = getenv("HOME");
-		if (!chdir(path))
-			return (0);
-			// printf("%s\n", strerror(errno));
-		if (getcwd(cwd, sizeof(cwd)) == NULL)
-			perror("getcwd child");
-		write(fd[1], cwd, strlen(cwd));
-		close(fd[1]);
+		fprintf(stderr, "minishell: cd: HOME not set\n");
+		return 1;
 	}
-	else
+	char cwd[PATH_MAX];
+	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
+	if (chdir(path) != 0)
 	{
-		close(fd[1]);
-		wait(NULL);
-		char str[PATH_MAX];
-		int i = read(fd[0], str, PATH_MAX);
-		str[i] = '\0';
-		if (!chdir(str))
-			return (close(fd[0]), 1);
-		close(fd[0]);
-	}	
-	return (0);
+		perror("minishell: cd");
+		return 1;
+	}
+	// Met à jour OLDPWD dans l'environnement custom
+	// (*all)->env = replace_env_var((*all)->env, "OLDPWD", cwd);
+	getcwd(cwd, sizeof(cwd));
+	printf("Apres cd = %s\n", cwd);
+	return 0;
 }
 
-int cd_oldpwd(void)
+int cd_oldpwd(t_all **all)
 {
-	int fd[2];
-	pipe(fd);
-	char	cwd[PATH_MAX];
-	pid_t pid = fork();
-	const char *path;
-	
-	if (pid == 0) //processus enfant
+	char *oldpwd = get_env_var("OLDPWD", (*all)->env);
+	if (!oldpwd)
 	{
-		close(fd[0]);
-		path = getenv("OLDPWD");
-		printf("path:%s\n", path);
-		if (chdir(path))
-			printf("%s\n", strerror(errno));
-		getcwd(cwd, sizeof(cwd));
-		write(fd[1], cwd, ft_strlen(cwd));
-		close(fd[1]);
+		fprintf(stderr, "minishell: cd: OLDPWD not set\n");
+		return 1;
 	}
-	else //processus parent
+	char cwd[PATH_MAX];
+	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
+	if (chdir(oldpwd) != 0)
 	{
-		printf("paret\n");
-		close(fd[1]);
-		wait(NULL);
-		char str[PATH_MAX];
-		int i = read(fd[0], str, PATH_MAX);
-		str[i] = '\0';
-		if (chdir(str))
-			return (close(fd[0]), 0);
-		printf("parent str:%s\n", str);
-		return (close(fd[0]), 1);
+		perror("minishell: cd");
+		return 1;
 	}
-	return (0);
+	// Met à jour OLDPWD
+	(*all)->env = replace_env_var((*all)->env, "OLDPWD", cwd);
+	getcwd(cwd, sizeof(cwd));
+	printf("Apres cd - = %s\n", cwd);
+	return 0;
 }
+
+// int cd_oldpwd(void)
+// {
+// 	char	cwd[PATH_MAX];
+// 	const char *path;
+	
+// 	path = getenv("OLDPWD");
+// 	if (chdir(path))
+// 		printf("%s\n", strerror(errno));
+// 	getcwd(cwd, sizeof(cwd));
+// 	printf("%s", cwd);
+// 	return (0);
+// }
 
 int cd_root(void)
 {
@@ -235,7 +224,7 @@ int cd_root(void)
 
 // /!\ CHANGER OLDPWD A CHAQUE UTILISATIION DE CD
 // ATTENDRE IMPLEMENTATION EXPORT
-int	homemade_cd(char **tab)
+int	homemade_cd(char **tab, t_all **all)
 {
 	if (!is_cd(tab[0]))
 	{
@@ -250,12 +239,12 @@ int	homemade_cd(char **tab)
 	if (is_cd(tab[0]) && (!tab[1] || is_home(tab[1])))
 	{
 		printf("3\n");
-		return (cd_home()); //passer cd_home de type int
+		return (cd_home(all)); //passer cd_home de type int
 	}
 	if (is_cd(tab[0]) && (ft_strcmp(tab[1], "-") == 0)) // cd - /!\ FAIRE APPEL A LE OLDPWD
 	{
 		printf("4\n");
-		return (cd_oldpwd());
+		return (cd_oldpwd(all));
 	}
 	if (is_cd(tab[0]) && (ft_strcmp(tab[1], "\\") == 0))
 	{
@@ -266,12 +255,12 @@ int	homemade_cd(char **tab)
 	return (0);
 }
 
-int is_builtin(char **tab)
+int is_builtin2(char **tab, t_all **all)
 {
 	if (is_cd(tab[0]))
 	{
 		printf("cd in\n");
-		homemade_cd(tab);
+		homemade_cd(tab, all);
 		return (1);
 	}
 	//  if (is_echo(tab[0]))

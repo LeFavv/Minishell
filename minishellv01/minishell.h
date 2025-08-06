@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kevwang <kevwang@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 12:49:19 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/04 17:42:59 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/06/26 12:49:19 by kevwang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <readline/history.h> // pour readline etc
 #include <sys/types.h>//wait
 #include <sys/wait.h>//wait
+#include <sys/stat.h>//stat
 
 #define SINGLEQUOTE 1
 #define DOUBLEQUOTE 2
@@ -38,6 +39,8 @@
 #define OUTFILE 21
 #define OUTFILEAPPEND 22
 
+#define PATH_MAX	4096
+
 typedef struct s_redir
 {
 	int infd;
@@ -52,6 +55,11 @@ typedef struct s_cmd_tab
 
 	int infd;
 	int outfd;
+	int input_failed; // 1 si redirection d'entrée a échoué, 0 sinon
+	int output_failed;
+	
+	char *in_str;
+	char *out_str;
 }t_cmd_tab;
 
 typedef struct s_cmd
@@ -87,11 +95,12 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
 
 //cd_test.c
-int is_builtin(char **tab, t_all **all);
-// int is_builtin2(char **tab, t_all **all);
-char **ft_remove_double_tab(char *str, char **tab);
-void	ft_shlvl(t_all **all);
-
+int is_builtin(char **tab);
+int is_builtin2(char **tab, t_all **all);
+int is_builtin_3(char **tab, t_all **all);
+int ft_atoi(char *str);
+int ft_exit(char **tab, t_all **all);
+int ft_is_digit(char *str);
 
 //exec_pipe.c  
 int	ft_open_pipe(t_commande *t_cmd);
@@ -101,6 +110,9 @@ int	ft_dup(int fd0, int fd1);
 
 //minishell_exec
 // void		exec(char *arg, char **env);
+
+
+void ft_shlvl(t_all **all);
 
 //minishell_free
 void	ft_free(char **tab1, char **tab2, char *str);
@@ -124,6 +136,7 @@ char *replace_dollar_test2(char *str, char **env, t_all *all);
 //parsing_double_tab.c
 char	**ft_copy_double_tab(char **tab);
 char	**ft_add_double_tab(char *str, char **tab);
+char **ft_remove_double_tab(char *str, char **tab);
 
 //parsing_free.c
 void	ft_free_double_tab(char **tab);

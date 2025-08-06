@@ -10,19 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+// #include "minishell.h"
 
+// int check_builtin()
+// {
 
-int check_builtin()
-{
-	
-}
+// }
 
-int main(int argc, char **argv, char **env)
-{
-	if (argc == 2)
-	{
+// int main(int argc, char **argv, char **env)
+// {
+// 	if (argc == 2)
+// 	{
 
-	}
+// 	}
 
-}
+// }

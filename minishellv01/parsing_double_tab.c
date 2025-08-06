@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_double_tab.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kevwang <kevwang@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 12:30:21 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/04 12:34:08 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/07/31 12:30:21 by kevwang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char **ft_add_double_tab(char *str, char **tab)
 	newtab[i] = ft_strdup(str);
 	i++;
 	newtab[i] = 0;
-	// ft_free_double_tab(tab);
+	ft_free_double_tab(tab);
 	return (newtab);
 }
 

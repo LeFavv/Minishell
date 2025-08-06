@@ -46,7 +46,8 @@ void	ft_waitpid(t_commande *t_cmd)
 	j = 0;
 	while (j < t_cmd->nbr_cmd)
 	{
-		waitpid(t_cmd->cmd_tab[j].id1, &t_cmd->status, 0);
+		if (t_cmd->cmd_tab[j].id1 > 0) // Seulement attendre les processus valides
+			waitpid(t_cmd->cmd_tab[j].id1, &t_cmd->status, 0);
 		j++;
 	}
 }

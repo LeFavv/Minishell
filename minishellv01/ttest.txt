@@ -39,3 +39,31 @@ echo te"$a"st'world'
 cat -e < infile > s1 | echo abc | < infile cat -e > s2 > s3
 
 cat -e < infile > s1 | cat -e | cat -e > s2 > s3
+
+ls < infile >> out1 > s1
+
+echo "hello"'world'
+
+$vide echo $vide $vide test | cat -e
+
+echo $vide $vide test | cat -e
+
+$vide echo test | cat -e
+
+$vide echo $vide $vide test $vide | cat -e
+
+ls > s1 > s2 > s3
+
+ls > s1 > nopermission > s3
+
+ls > nopermission > s2 > nopermission
+
+ls > nopermission > s2 > nopermission | echo test
+
+ls > s1 > s2 > s3 | echo test
+
+cat < noinfile | echo test
+
+cat < noinfile1 < noinfile2 | echo test
+
+exit 0 | exit 1

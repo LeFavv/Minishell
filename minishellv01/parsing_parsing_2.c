@@ -199,7 +199,8 @@ int ft_parse_space(char *str, t_list **shell, int *i, t_all *all)
 	j = 0;
 	state = NORMAL;
 	while ((str[*i + j] != ' ' /*&& str[*i + j] != '"' && str[*i + j] != '\''*/
-			&& str[*i + j] != '|' && str[*i + j] != '\0')
+			&& str[*i + j] != '|' && str[*i + j] != '>'
+			&& str[*i + j] != '<'&& str[*i + j] != '\0')
 		|| (indoublequote == 1 || insinglequote == 1))
 	{
 		if (str[*i + j] == '\0' && (indoublequote == 1 || insinglequote == 1))
