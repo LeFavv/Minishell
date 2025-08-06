@@ -31,8 +31,11 @@ int ft_parse_pipe(char *str, t_list **shell, int *i)
 		// tab = ft_add_double_tab(temp, tab);
 		if (ft_strlen(temp) == 1)
 			ft_add(shell, temp, PIPE);
-		else
-			ft_add(shell, temp, ERROR);
+		else if (ft_strlen(temp) == 2)
+			return (free(temp), ft_err("syntax error near unexpected token `||'\n", NULL), -1);
+			// ft_add(shell, temp, ERROR);
+		else 
+			return (free(temp), ft_err("syntax error near unexpected token `||'\n", NULL), -1);
 		// printf("single:%s i:%d j:%d\n", temp, i, j);
 		free(temp);
 	}
@@ -60,8 +63,11 @@ int ft_parse_out(char *str, t_list **shell, int *i)
 			ft_add(shell, temp, OUTPUT);
 		else if (ft_strlen(temp) == 2)
 			ft_add(shell, temp, APPEND);
-		else
-			ft_add(shell, temp, ERROR);
+		else if (ft_strlen(temp) == 3)
+			return (free(temp), ft_err("syntax error near unexpected token `>'\n", NULL), -1);
+			// ft_add(shell, temp, ERROR);
+		else 
+			return (free(temp), ft_err("syntax error near unexpected token `>>'\n", NULL), -1);
 		// printf("single:%s i:%d j:%d\n", temp, i, j);
 		free(temp);
 	}
@@ -89,8 +95,11 @@ int ft_parse_in(char *str, t_list **shell, int *i)
 			ft_add(shell, temp, INPUT);
 		else if (ft_strlen(temp) == 2)
 			ft_add(shell, temp, HEREDOC);
-		else
-			ft_add(shell, temp, ERROR);
+		else if (ft_strlen(temp) == 3)
+			return (free(temp), ft_err("syntax error near unexpected token `<'\n", NULL), -1);
+			// ft_add(shell, temp, ERROR);
+		else 
+			return (free(temp), ft_err("syntax error near unexpected token `<<'\n", NULL), -1);
 		// printf("single:%s i:%d j:%d\n", temp, i, j);
 		free(temp);
 	}

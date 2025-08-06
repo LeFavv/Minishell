@@ -51,7 +51,8 @@ SRC = ${FILE:.c=.o}
 all : ${NAME}
 
 ${NAME}: ${SRC}
-	${CC} ${CFLAGS} -o $@ $^ ${FLAGS} -g3
+	make -C gnl
+	${CC} ${CFLAGS} -o $@ $^ ${FLAGS} -Lgnl -lgnl
 
 # test: test.c
 # 	${CC} ${CFLAGS} -o $@ $^ ${FLAGS}

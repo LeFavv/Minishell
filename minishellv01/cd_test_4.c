@@ -147,11 +147,11 @@ int	ft_export(char **tab, t_all **all)
     return (0);
 }
 
-int ft_atoi(char *str)
+long ft_atoi(char *str)
 {
 	int i = 0;
 	int sign = 1;
-	int nb = 0;
+	long nb = 0;
 
 	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
 		i++;
@@ -186,11 +186,11 @@ void ft_shlvl(t_all **all)
 				nb++;
                 (*all)->env = ft_replace_double_tab("SHLVL", ft_itoa(nb), (*all)->env);
             }
-			// printf("SHLVL = %d\n", nb);
             break;
         }
         i++;
     }
+	// printf("\n\n%d\n\n", nb);
 }
 
 //return value unset = 0 a chaque fois ??
@@ -400,17 +400,31 @@ void	ft_putstr(char *str)
 	}
 }
 
+int	is_only_n(char *str)
+{
+	int i = 1;
+
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	ft_echo(char **tab)
 {
-	int i = 0;
+	int i = 1;
 	
 	if (!tab[1])
 		return (0);
-	if (tab[1] && ft_strcmp(tab[1], "-n") == 0)
+	if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
 	{
-		if (tab[2])
+		while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
+			i++;
+		if (tab[i])
 		{
-			i = 2;
 			while (tab[i])
 			{
 				ft_putstr(tab[i]);
@@ -427,7 +441,6 @@ int	ft_echo(char **tab)
 		while (tab[i])
 		{
 			ft_putstr(tab[i]);
-			// write(1,"test",4);
 			if (tab[i + 1])
 				write (1, " ", 1);
 			i++;
@@ -468,6 +481,8 @@ int ft_exit(char **tab, t_all **all)
 	}
 	if ((*all)->t_cmd->nbr_cmd == 1)
 		exit(ft_atoi(tab[1]) % 256);
+	else if ((*all)->t_cmd->nbr_cmd > 1)
+		(*all)->exit_status = ft_atoi(tab[1]) % 256;
 	return (0);
 }
 

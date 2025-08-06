@@ -39,15 +39,21 @@ int ft_parse_decoupe(char *str, t_list **shell, t_all *all)
 		}
 		else if (str[i] == '|')
 		{
-			ft_parse_pipe(str, shell, &i);
+			result = ft_parse_pipe(str, shell, &i);
+			if (result == -1)
+				return (-1);
 		}
 		else if (str[i] == '>')
 		{
-			ft_parse_out(str, shell, &i);
+			result = ft_parse_out(str, shell, &i);
+			if (result == -1)
+				return (-1);
 		}
 		else if (str[i] == '<')
 		{
-			ft_parse_in(str, shell, &i);
+			result = ft_parse_in(str, shell, &i);
+			if (result == -1)
+				return (-1);
 		}
 		else
 		{

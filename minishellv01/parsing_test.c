@@ -14,6 +14,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <limits.h>
 
 // if (i == 0)
 // {
@@ -75,11 +76,12 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 		//puis executer les fonctions
 		if (ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "echo", 4) == 0
 			|| ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "pwd", 3) == 0
-			
-			)
-
+			|| ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "env", 3) == 0
+			|| (ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "export", 6) == 0 &&  t_cmd->nbr_cmd > 1)
+			|| (ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "exit", 5) == 0 &&  t_cmd->nbr_cmd > 1)
+		)	
 		{
-
+			// printf("je rentre\n");
 			// printf("builtin\n");
 			t_cmd->cmd_tab[i].id1 = fork();
 			if (t_cmd->cmd_tab[i].id1 == 0)
@@ -111,17 +113,18 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 				// }
 				// ft_close_pipe(t_cmd);
 				t_cmd->cmd_tab[i].id1 = -1; // Les builtins n'ont pas de processus fils
-				exit(0);
+				// exit(0);
+				// printf("exit status = %d\n", (*all)->exit_status);
+				exit((*all)->exit_status);
 			}
 		}
-		else if (ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "export", 6) == 0
+		else if (
+			ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "export", 6) == 0
 			|| ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "unset", 5) == 0
 			|| ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "cd", 2) == 0
-			|| ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "env", 3) == 0
-
-
 			// || ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "pwd", 3) == 0
 			// || ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "exit", 4) == 0
+			// || ft_strncmp(t_cmd->cmd_tab[i].cmd_args[0], "env", 3) == 0
 			)
 		{
             if (is_builtin_3(t_cmd->cmd_tab[i].cmd_args, all) == 1)
@@ -145,10 +148,10 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 			// ft_exit()
 			if (!t_cmd->cmd_tab[i].cmd_args[1])
 			{
-				write(1, "exit\n", 5); //sortie 1 ou 2 
+				write(1, "exit\n", 5); //sortie ou 2 
 				exit(0);
 			}
-			if (!ft_is_digit(t_cmd->cmd_tab[i].cmd_args[1]))
+			if (!ft_is_digit(t_cmd->cmd_tab[i].cmd_args[1]) || ft_atoi(t_cmd->cmd_tab[i].cmd_args[1]) > INT_MAX || ft_atoi(t_cmd->cmd_tab[i].cmd_args[1]) < INT_MIN)
 			{
 				write(1, "exit\n", 5); //sortie 1 ou 2 
 				ft_err(t_cmd->cmd_tab[i].cmd_args[1], "numeric argument required");
@@ -168,7 +171,11 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 				// return (1);
 			}
 			if ((*all)->t_cmd->nbr_cmd == 1 && t_cmd->cmd_tab[i].cmd_args[2] == NULL)
+			{
+				write (1, "exit\n", 5);
 				exit(ft_atoi(t_cmd->cmd_tab[i].cmd_args[1]) % 256);
+			}
+				
 			// return (0);
 		}
 		else
@@ -181,10 +188,31 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 			// {
 			// 	all->exit_status = 1;
 			// }
+			// printf("testtest\n");
+
+			// char *test = get_next_line(0);
+			// while (test)
+			// {
+			// 	if (ft_strncmp(test, (*all)->shell->str, ft_strlen((*all)->shell->str)) == 0)
+			// 	{
+			// 		free(test);
+			// 		break ;
+			// 	}
+			// 	printf("infd:%d\n", (*t_cmd).cmd_tab[i].infd);
+			// 	write((*t_cmd).cmd_tab[i].heredoc, test, ft_strlen(test));
+			// 	free(test);
+			// 	test = get_next_line(0);
+			// }
+			// close((*t_cmd).cmd_tab[i].heredoc);
+			// (*t_cmd).cmd_tab[i].heredoc = open("temp",  O_RDONLY , 0644);
+
+				
 			t_cmd->cmd_tab[i].id1 = fork();
 			if (t_cmd->cmd_tab[i].id1 == 0)
 			{
+				// printf("J'arrive la \n");
 				// Gestion des redirections d'entrée pour toutes les commandes
+				// printf("infd:%d\n", (*t_cmd).cmd_tab[i].infd);
 				if (t_cmd->cmd_tab[i].infd >= 0)
 					dup2(t_cmd->cmd_tab[i].infd, 0);
 				else if (i > 0)  // Si pas de redirection d'entrée, utiliser le pipe précédent
@@ -205,7 +233,13 @@ int ft_exec_commande(t_commande *t_cmd, t_redir *t_red, t_all **all, char **env)
 					exit(127);
 				exit(0);
 			}
+			// printf("J'arrive la \n");
+			// close((*t_cmd).cmd_tab[i].infd);
+			// unlink("temp");
 		}
+		// printf("J'arrive la \n");
+		// close((*t_cmd).cmd_tab[i].infd);
+		// unlink("temp");
 		i++;
 	}
 	ft_close_pipe(t_cmd);
@@ -309,6 +343,7 @@ int main(int argc, char **argv, char **env)
 	if (argc == 1)
 	{
 		all = malloc(sizeof(t_all));
+		// all->env = env;
 		if (env[0])
 		{
         	all->env = env;
@@ -317,12 +352,6 @@ int main(int argc, char **argv, char **env)
 		else
 		{
 			all->env = create_default_env();
-			// int i = 0;
-			// while (all->env[i])
-			// {
-			// 	printf("%s\n", all->env[i]);
-			// 	i++;
-			// }
 		}
 		all->exit_status = 0; // Initialiser l'exit status à 0 au début du programme
 		while (1)
@@ -358,8 +387,15 @@ int main(int argc, char **argv, char **env)
 			ft_concatenate(&all->shell);
 
 			//lstiter_env pour verifier les redirecions '<' '>' '>>' '<<'
-			ft_lstiter_env(&all->shell, env, all);
+
 			// ft_lstiter_env(&all->shell, all->env, all);
+			if (ft_lstiter_env(&all->shell, all->env, all) == -1)
+			{
+				if (all->shell)
+					ft_clear(&all->shell);
+				free(str);
+				continue ;
+			}
 	// ft_print(all->shell);
 
 			// ft_assign_cmd_arg_states(&all->shell);
@@ -427,7 +463,8 @@ int main(int argc, char **argv, char **env)
 			ft_exec_commande(all->t_cmd, all->t_red, &all, all->env);
 			ft_waitpid(all->t_cmd);
 			ft_close_pipe(all->t_cmd);
-
+			// if 
+			// unlink("temp");
 			//exit code
 			// int exit_status = 0;
 			// Seulement mettre à jour l'exit status si un processus a réellement été exécuté

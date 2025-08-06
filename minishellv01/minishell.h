@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kevwang <kevwang@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 12:49:19 by kevwang           #+#    #+#             */
-/*   Updated: 2025/06/26 12:49:19 by kevwang          ###   ########.fr       */
+/*   Updated: 2025/08/06 20:14:13 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include <sys/wait.h>//wait
 #include <sys/stat.h>//stat
 
+# include "gnl/get_next_line.h"
+
 #define SINGLEQUOTE 1
 #define DOUBLEQUOTE 2
 #define NORMAL 3
@@ -36,6 +38,7 @@
 #define ERROR 99
 
 #define INFILE 20
+#define LIMITER 19
 #define OUTFILE 21
 #define OUTFILEAPPEND 22
 
@@ -58,8 +61,10 @@ typedef struct s_cmd_tab
 	int input_failed; // 1 si redirection d'entrée a échoué, 0 sinon
 	int output_failed;
 	
+	int heredoc;
 	char *in_str;
 	char *out_str;
+	char *limiter_str;
 }t_cmd_tab;
 
 typedef struct s_cmd
@@ -93,12 +98,14 @@ typedef struct s_all
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
+//gnl
+
 
 //cd_test.c
 int is_builtin(char **tab);
 int is_builtin2(char **tab, t_all **all);
 int is_builtin_3(char **tab, t_all **all);
-int ft_atoi(char *str);
+long ft_atoi(char *str);
 int ft_exit(char **tab, t_all **all);
 int ft_is_digit(char *str);
 
@@ -154,7 +161,7 @@ void ft_add(t_list **lst, char *str, int state);
 int ft_size(t_list *lst);
 void ft_print(t_list *lst);
 int ft_check(char *str, char c);
-void	ft_lstiter_env(t_list **lst, char **env, t_all *all);
+int 	ft_lstiter_env(t_list **lst, char **env, t_all *all);
 void ft_lstiteration(t_all **all, void(*f)(char *));
 
 //parsing_parsing_1.c

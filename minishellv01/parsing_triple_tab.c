@@ -141,6 +141,7 @@ int ft_create_triple_tab(t_list **shell ,t_commande **t_cmd, t_all **all)
     
     (*t_cmd)->cmd_tab[i].infd = -1;
     (*t_cmd)->cmd_tab[i].outfd = -1;
+    (*t_cmd)->cmd_tab[i].heredoc = 0;
     // (*t_cmd)->cmd_tab[i].errfd = -1;
 	t_list *temp = *shell;
 	while (*shell != NULL)
@@ -166,6 +167,56 @@ int ft_create_triple_tab(t_list **shell ,t_commande **t_cmd, t_all **all)
 			else
 				prev_infd = (*t_cmd)->cmd_tab[i].infd;
 		}
+
+
+		if ((*shell)->state == LIMITER && (*t_cmd)->cmd_tab[i].input_failed == 0)
+		{
+			if (prev_infd != -1)
+				close(prev_infd);
+			(*t_cmd)->cmd_tab[i].infd = open("temp", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if ((*t_cmd)->cmd_tab[i].infd < 0)
+			{
+				// perror((*shell)->str);
+				if ((*t_cmd)->cmd_tab[i].input_failed == 0 && (*t_cmd)->cmd_tab[i].output_failed == 0)
+					perror((*shell)->str);
+					// (*t_cmd)->cmd_tab[i].in_str = (*shell)->str;
+				(*all)->exit_status = 1; // Set exit status to indicate error
+				(*t_cmd)->cmd_tab[i].infd = -1; // Marquer comme échec
+				(*t_cmd)->cmd_tab[i].input_failed = 1; // Marquer que la redirection a échoué
+				// Ne pas retourner -1, continuer le parsing
+			}
+			else
+			{
+				// prev_infd = (*t_cmd)->cmd_tab[i].infd;
+				(*t_cmd)->cmd_tab[i].heredoc++;
+				if (access("temp", F_OK) == 0)
+				{
+					close((*t_cmd)->cmd_tab[i].infd);
+					unlink("temp");
+				}
+				(*t_cmd)->cmd_tab[i].infd  = open("temp", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				char *test = get_next_line(0);
+				while (test)
+				{
+					if (ft_strncmp(test, (*shell)->str, ft_strlen((*shell)->str)) == 0)
+					{
+						free(test);
+						break ;
+					}
+					// printf("infd:%d\n", (*t_cmd)->cmd_tab[i].infd);
+					write((*t_cmd)->cmd_tab[i].infd, test, ft_strlen(test));
+					free(test);
+					test = get_next_line(0);
+				}
+				close((*t_cmd)->cmd_tab[i].infd);
+				(*t_cmd)->cmd_tab[i].infd = open("temp",  O_RDONLY , 0644);
+				prev_infd = (*t_cmd)->cmd_tab[i].infd;
+			}	
+		}
+
+
+
+
 		if ((*shell)->state == OUTFILE && (*t_cmd)->cmd_tab[i].output_failed == 0 && (*t_cmd)->cmd_tab[i].input_failed == 0)
 		{
 			if (prev_outfd != -1)
