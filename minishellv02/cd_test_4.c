@@ -87,12 +87,12 @@ char **ft_replace_double_tab(char *var_name, char *str, char **tab)
 	return (newtab);
 }
 
-int is_export(char *str)
-{
-	if (ft_strcmp(str, "export") == 0)
-		return (1);
-	return (0);
-}
+// int is_export(char *str)
+// {
+// 	if (ft_strcmp(str, "export") == 0)
+// 		return (1);
+// 	return (0);
+// }
 
 char *ft_strchr(char *str, char c)
 {
@@ -126,64 +126,64 @@ int is_alpha(char *str)
 }
 */
 
-int is_alpha(char *str)
-{
-    int  i = 0;
+// int is_alpha(char *str)
+// {
+//     int  i = 0;
 
-    if (!(str[i] >='a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z') && str[i] != '_')
-		return (0);
-	if (ft_strlen(str) == 1)
-		return (1);
-    i++;
-    while (i < ((int)ft_strlen(str) - 1))
-    {
-        if (!((str[i] >='a' && str[i] <= 'z' ) || (str[i] >= 'A' && str[i] <= 'Z')))
-        {
-            if (!(str[i] >= '0' && str[i] <= '9'))
-            {
-                if (str[i] != '_')
-                    return (0);
-            }
-        }
-        i++;
-    }
-    if (!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z') && str[i] != '_')
-        return (0);
-    return (1);
-}
+//     if (!(str[i] >='a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z') && str[i] != '_')
+// 		return (0);
+// 	if (ft_strlen(str) == 1)
+// 		return (1);
+//     i++;
+//     while (i < ((int)ft_strlen(str) - 1))
+//     {
+//         if (!((str[i] >='a' && str[i] <= 'z' ) || (str[i] >= 'A' && str[i] <= 'Z')))
+//         {
+//             if (!(str[i] >= '0' && str[i] <= '9'))
+//             {
+//                 if (str[i] != '_')
+//                     return (0);
+//             }
+//         }
+//         i++;
+//     }
+//     if (!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z') && str[i] != '_')
+//         return (0);
+//     return (1);
+// }
 
-int	ft_export(char **tab, t_all **all)
-{
-    int i = 1;
-    char *var_name;
-    char *equal_pos;
+// int	ft_export(char **tab, t_all **all)
+// {
+//     int i = 1;
+//     char *var_name;
+//     char *equal_pos;
 
-    while (tab[i])
-    {
-        equal_pos = ft_strchr(tab[i], '=');
-		if ((!equal_pos && !is_alpha(tab[i])) || tab[i][0] == '=')
-            return (ft_err(tab[0], "not a valid identifier"), 1);
-		if (ft_strlen(tab[i]) == 1 && tab[i][0] == '=')
-			return (ft_err(tab[0], "not a valid identifier"), 1);
-		else if (!equal_pos && is_alpha(tab[i]))
-			return (0);
-        if (equal_pos)
-        {
-            var_name = ft_substr(tab[i], 0, equal_pos - tab[i]);
-			if (!var_name)
-				return (ft_err(tab[0], "malloc failed"), 1);
-			if (is_alpha(var_name) == 0|| !var_name)
-				return (ft_err(tab[0], "not a valid identifier"), free(var_name), 1);
-            if (!get_env_var(var_name, (*all)->env))
-                (*all)->env = ft_add_double_tab(tab[i], (*all)->env);
-            else
-                (*all)->env = ft_replace_double_tab(var_name, equal_pos + 1, (*all)->env);
-            free(var_name);
-        }
-        i++;
-    }
-    return (0);
-}
+//     while (tab[i])
+//     {
+//         equal_pos = ft_strchr(tab[i], '=');
+// 		if ((!equal_pos && !is_alpha(tab[i])) || tab[i][0] == '=')
+//             return (ft_err(tab[0], "not a valid identifier"), 1);
+// 		if (ft_strlen(tab[i]) == 1 && tab[i][0] == '=')
+// 			return (ft_err(tab[0], "not a valid identifier"), 1);
+// 		else if (!equal_pos && is_alpha(tab[i]))
+// 			return (0);
+//         if (equal_pos)
+//         {
+//             var_name = ft_substr(tab[i], 0, equal_pos - tab[i]);
+// 			if (!var_name)
+// 				return (ft_err(tab[0], "malloc failed"), 1);
+// 			if (is_alpha(var_name) == 0|| !var_name)
+// 				return (ft_err(tab[0], "not a valid identifier"), free(var_name), 1);
+//             if (!get_env_var(var_name, (*all)->env))
+//                 (*all)->env = ft_add_double_tab(tab[i], (*all)->env);
+//             else
+//                 (*all)->env = ft_replace_double_tab(var_name, equal_pos + 1, (*all)->env);
+//             free(var_name);
+//         }
+//         i++;
+//     }
+//     return (0);
+// }
 
 int ft_atoi(char *str)
 {
@@ -326,89 +326,89 @@ int ft_pwd(t_all **all)
 	return (1);
 }
 
-int is_cd(char *str)
-{
-	if (ft_strcmp(str, "cd") == 0)
-		return (1);
-	return (0);
-}
-int is_home(char *str)
-{
-	if (ft_strcmp(str, "~") == 0)
-		return (1);
-	return (0);
-}
+// int is_cd(char *str)
+// {
+// 	if (ft_strcmp(str, "cd") == 0)
+// 		return (1);
+// 	return (0);
+// }
+// int is_home(char *str)
+// {
+// 	if (ft_strcmp(str, "~") == 0)
+// 		return (1);
+// 	return (0);
+// }
 
-int	cd_home(t_all **all)
-{
-	char *path = get_env_var("HOME", (*all)->env);
-	if (!path)
-	{
-		perror("minishell: cd: HOME not set\n");
-		return 1;
-	}
-	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
-	if (chdir(path) != 0)
-	{
-		perror("minishell: cd");
-		return 1;
-	}
-	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
-	getcwd(cwd, sizeof(cwd));
-	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
-	return 0;
-}
+// int	cd_home(t_all **all)
+// {
+// 	char *path = get_env_var("HOME", (*all)->env);
+// 	if (!path)
+// 	{
+// 		perror("minishell: cd: HOME not set\n");
+// 		return 1;
+// 	}
+// 	char cwd[PATH_MAX];
+// 	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
+// 	if (chdir(path) != 0)
+// 	{
+// 		perror("minishell: cd");
+// 		return 1;
+// 	}
+// 	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
+// 	getcwd(cwd, sizeof(cwd));
+// 	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
+// 	return 0;
+// }
 
-int cd_oldpwd(t_all **all)
-{
-	char *oldpwd = get_env_var("OLDPWD", (*all)->env);
-	if (!oldpwd)
-	{
-		fprintf(stderr, "minishell: cd: OLDPWD not set\n");
-		return 1;
-	}
-	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	if (chdir(oldpwd) != 0)
-	{
-		perror("minishell: cd");
-		return 1;
-	}
-	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
-	getcwd(cwd, sizeof(cwd));
-	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
-	ft_putstr(cwd);
-	write(1, "\n", 1);
-	// printf("%s\n", cwd);
-	return 0;
-}
+// int cd_oldpwd(t_all **all)
+// {
+// 	char *oldpwd = get_env_var("OLDPWD", (*all)->env);
+// 	if (!oldpwd)
+// 	{
+// 		fprintf(stderr, "minishell: cd: OLDPWD not set\n");
+// 		return 1;
+// 	}
+// 	char cwd[PATH_MAX];
+// 	getcwd(cwd, sizeof(cwd));
+// 	if (chdir(oldpwd) != 0)
+// 	{
+// 		perror("minishell: cd");
+// 		return 1;
+// 	}
+// 	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
+// 	getcwd(cwd, sizeof(cwd));
+// 	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
+// 	ft_putstr(cwd);
+// 	write(1, "\n", 1);
+// 	// printf("%s\n", cwd);
+// 	return 0;
+// }
 
-int cd_root(t_all **all)
-{
-	if (chdir("/"))
-		return (perror("errno"), -1);
-	getcwd("/", 1);
-	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd));
-	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
-	return  (0);
-}
+// int cd_root(t_all **all)
+// {
+// 	if (chdir("/"))
+// 		return (perror("errno"), -1);
+// 	getcwd("/", 1);
+// 	char cwd[PATH_MAX];
+// 	getcwd(cwd, sizeof(cwd));
+// 	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
+// 	return  (0);
+// }
 
-int	ft_cd_change_dir(t_all **all, char *str)
-{
-	char cwd[PATH_MAX];
-	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
-	if (chdir(str) != 0)
-	{
-		perror("minishell: cd");
-		return 1;
-	}
-	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
-	getcwd(cwd, sizeof(cwd));
-	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
-	return 0;
-}
+// int	ft_cd_change_dir(t_all **all, char *str)
+// {
+// 	char cwd[PATH_MAX];
+// 	getcwd(cwd, sizeof(cwd)); // sauvegarde l'ancien répertoire
+// 	if (chdir(str) != 0)
+// 	{
+// 		perror("minishell: cd");
+// 		return 1;
+// 	}
+// 	(*all)->env = ft_replace_double_tab("OLDPWD", cwd, (*all)->env);
+// 	getcwd(cwd, sizeof(cwd));
+// 	(*all)->env = ft_replace_double_tab("PWD", cwd, (*all)->env);
+// 	return 0;
+// }
 
 // int	homemade_cd(char **tab, t_all **all)
 // {
@@ -446,54 +446,54 @@ int	ft_cd_change_dir(t_all **all, char *str)
 // 	return (1);
 // }
 
-int    homemade_cd(char **tab, t_all **all)
-{
-    if (!is_cd(tab[0]))
-    {
-        // printf("1\n");
-        return (1);
-    }
-    if (is_cd(tab[0]) && (!tab[1] || is_home(tab[1])))
-    {
-        return (cd_home(all));
-    }
+// int    homemade_cd(char **tab, t_all **all)
+// {
+//     if (!is_cd(tab[0]))
+//     {
+//         // printf("1\n");
+//         return (1);
+//     }
+//     if (is_cd(tab[0]) && (!tab[1] || is_home(tab[1])))
+//     {
+//         return (cd_home(all));
+//     }
     
-    if (tab[2])
-    {
-        // printf("2\n");
-        // return (perror("cd : too may arguemtents"), 1);
-        return (ft_err(tab[0], "too many arguments"), 1);
-    }
+//     if (tab[2])
+//     {
+//         // printf("2\n");
+//         // return (perror("cd : too may arguemtents"), 1);
+//         return (ft_err(tab[0], "too many arguments"), 1);
+//     }
 
-    if (tab[1])
-    {
-        if (is_cd(tab[0]) && (ft_strcmp(tab[1], "-") == 0))
-        {
-            // printf("4\n");
-            return (cd_oldpwd(all));
-        }
-        if (is_cd(tab[0]) && (ft_strcmp(tab[1], "/") == 0))
-        {
-            // printf("5\n");
-            return (cd_root(all));    
-        }
-        if (is_cd(tab[0]) && tab[1])
-        {
-            // printf("6");
-            return (ft_cd_change_dir(all, tab[1]));
-        }
-    }
-    return (1);
-}
+//     if (tab[1])
+//     {
+//         if (is_cd(tab[0]) && (ft_strcmp(tab[1], "-") == 0))
+//         {
+//             // printf("4\n");
+//             return (cd_oldpwd(all));
+//         }
+//         if (is_cd(tab[0]) && (ft_strcmp(tab[1], "/") == 0))
+//         {
+//             // printf("5\n");
+//             return (cd_root(all));    
+//         }
+//         if (is_cd(tab[0]) && tab[1])
+//         {
+//             // printf("6");
+//             return (ft_cd_change_dir(all, tab[1]));
+//         }
+//     }
+//     return (1);
+// }
 
-int	is_echo(char *str)
-{
-	if (ft_strcmp(str, "echo") == 0)
-		return (1);
-	// if (ft_strncmp(str, "echo", 4) == 0)
-		// return (1);
-	return (0);
-}
+// int	is_echo(char *str)
+// {
+// 	if (ft_strcmp(str, "echo") == 0)
+// 		return (1);
+// 	// if (ft_strncmp(str, "echo", 4) == 0)
+// 		// return (1);
+// 	return (0);
+// }
 
 void	ft_putstr(char *str)
 {
@@ -518,43 +518,43 @@ int    is_only_n(char *str)
     return (1);
 }
 
-int    ft_echo(char **tab)
-{
-    int i = 1;
+// int    ft_echo(char **tab)
+// {
+//     int i = 1;
     
-    if (!tab[1])
-        return (write (1, "\n", 1), 0);
-    if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
-    {
-        while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
-            i++;
-        if (tab[i])
-        {
-            while (tab[i])
-            {
-                ft_putstr(tab[i]);
-                if (tab[i + 1])
-                    write (1, " ", 1);
-                i++;
-            }
-            return (0);
-        }
-    }
-    else if (tab[1])
-    {
-        i = 1;
-        while (tab[i])
-        {
-            ft_putstr(tab[i]);
-            // write(1,"test",4);
-            if (tab[i + 1])
-                write (1, " ", 1);
-            i++;
-        }
-        write (1, "\n", 1);
-    }
-    return (0);
-}
+//     if (!tab[1])
+//         return (write (1, "\n", 1), 0);
+//     if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
+//     {
+//         while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
+//             i++;
+//         if (tab[i])
+//         {
+//             while (tab[i])
+//             {
+//                 ft_putstr(tab[i]);
+//                 if (tab[i + 1])
+//                     write (1, " ", 1);
+//                 i++;
+//             }
+//             return (0);
+//         }
+//     }
+//     else if (tab[1])
+//     {
+//         i = 1;
+//         while (tab[i])
+//         {
+//             ft_putstr(tab[i]);
+//             // write(1,"test",4);
+//             if (tab[i + 1])
+//                 write (1, " ", 1);
+//             i++;
+//         }
+//         write (1, "\n", 1);
+//     }
+//     return (0);
+// }
 
 /*
 int	ft_echo(char **tab)

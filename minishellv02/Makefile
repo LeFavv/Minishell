@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kevwang <kevwang@student.42.fr>            +#+  +:+       +#+         #
+#    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/06/26 12:48:57 by kevwang          ###   ########.fr        #
+#    Updated: 2025/08/12 18:03:14 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,10 @@ exec_check_exit_status.c \
 signals.c \
 parsing_check_arg.c \
 read_input.c \
+builtin_cd.c \
+builtin_cd_2.c \
+builtin_echo.c \
+builtin_export.c
 
 
 # parsing_pid.c \
@@ -98,6 +102,11 @@ clean:
 	signals.o \
 	parsing_check_arg.o \
 	read_input.o \
+	builtin_cd.o \
+	builtin_cd_2.o \
+	builtin_echo.o \
+	builtin_export.o
+
 
 
 fclean:clean
