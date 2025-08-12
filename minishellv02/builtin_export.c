@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 17:54:08 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/12 18:34:32 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/12 18:50:57 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int		is_export(char *str);
 int		is_alpha(char *str);
-void	if_equal_pos(t_all **all, char *var_name, int i, char **tab, char *equal_pos);
+void	if_equal_pos(t_all **all, char *var_name, char **tab, char *equal_pos);
 int		if_equal_pos_return(char *var_name, char **tab);
 int		ft_export(char **tab, t_all **all);
 
@@ -27,18 +27,18 @@ int	is_export(char *str)
 
 int	is_alpha(char *str)
 {
-	int  i;
-	
-	i = 0;
-	if (!(str[i] >='a' && str[i] <= 'z') 
-		&& !(str[i] >= 'A' && str[i] <= 'Z') && str[i] != '_')
+	int	i;
+
+	i = 1;
+	if (!(str[0] >= 'a' && str[0] <= 'z')
+		&& !(str[0] >= 'A' && str[0] <= 'Z') && str[0] != '_')
 		return (0);
 	if (ft_strlen(str) == 1)
 		return (1);
-	i++;
 	while (i < ((int)ft_strlen(str) - 1))
 	{
-		if (!((str[i] >='a' && str[i] <= 'z' ) || (str[i] >= 'A' && str[i] <= 'Z')))
+		if (!((str[i] >= 'a' && str[i] <= 'z' )
+				|| (str[i] >= 'A' && str[i] <= 'Z')))
 		{
 			if (!(str[i] >= '0' && str[i] <= '9'))
 			{
@@ -48,36 +48,36 @@ int	is_alpha(char *str)
 		}
 		i++;
 	}
-	if (!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' 
-		&& str[i] <= 'Z') && str[i] != '_')
+	if (!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A'
+			&& str[i] <= 'Z') && str[i] != '_')
 		return (0);
 	return (1);
 }
 
-void if_equal_pos(t_all **all, char *var_name, int i, char **tab, char *equal_pos)
+void	if_equal_pos(t_all **all, char *v_n, char **tab, char *equal_pos)
 {
-	if (!get_env_var(var_name, (*all)->env))
-		(*all)->env = ft_add_double_tab(tab[i], (*all)->env);
+	if (!get_env_var(v_n, (*all)->env))
+		(*all)->env = ft_add_double_tab(*tab, (*all)->env);
 	else
-		(*all)->env = ft_replace_double_tab(var_name, equal_pos + 1, (*all)->env);   
+		(*all)->env = ft_replace_double_tab(v_n, equal_pos + 1, (*all)->env);
 }
 
-int if_equal_pos_return(char *var_name, char **tab)
+int	if_equal_pos_return(char *var_name, char **tab)
 {
 	if (!var_name)
 		return (ft_err(tab[0], "malloc failed"), 1);
-	if (is_alpha(var_name) == 0|| !var_name)
+	if (is_alpha(var_name) == 0 || !var_name)
 		return (ft_err(tab[0], "not a valid identifier"), free(var_name), 1);
 	return (0);
 }
 
 int	ft_export(char **tab, t_all **all)
 {
-	int i;
-	char *var_name;
-	char *equal_pos;
+	int		i;
+	char	*var_name;
+	char	*equal_pos;
 
-	i= 1;
+	i = 1;
 	while (tab[i])
 	{
 		equal_pos = ft_strchr(tab[i], '=');
@@ -90,9 +90,9 @@ int	ft_export(char **tab, t_all **all)
 		if (equal_pos)
 		{
 			var_name = ft_substr(tab[i], 0, equal_pos - tab[i]);
-			if (!var_name || (is_alpha(var_name) == 0|| !var_name))
+			if (!var_name || (is_alpha(var_name) == 0 || !var_name))
 				return (if_equal_pos_return(var_name, tab));
-			if_equal_pos(all, var_name, i, tab, equal_pos);
+			if_equal_pos(all, var_name, &(*tab), equal_pos);
 			free(var_name);
 		}
 		i++;
