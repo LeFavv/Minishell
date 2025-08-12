@@ -45,7 +45,7 @@ char **ft_replace_double_tab(char *var_name, char *str, char **tab)
         newtab = malloc(sizeof(char *) * 1);
         // newtab[0] = ft_strdup(str);
         newtab[0] = 0;
-        return (newtab);
+        return (free(var_name_equal),newtab);
     }
     while (tab[i])
         i++;
@@ -147,11 +147,11 @@ int	ft_export(char **tab, t_all **all)
     return (0);
 }
 
-long ft_atoi(char *str)
+int ft_atoi(char *str)
 {
 	int i = 0;
 	int sign = 1;
-	long nb = 0;
+	int nb = 0;
 
 	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
 		i++;
@@ -184,7 +184,9 @@ void ft_shlvl(t_all **all)
             {
                 nb = ft_atoi(equal_pos + 1);
 				nb++;
-                (*all)->env = ft_replace_double_tab("SHLVL", ft_itoa(nb), (*all)->env);
+				char *temp = ft_itoa(nb);
+                (*all)->env = ft_replace_double_tab("SHLVL", temp, (*all)->env);
+                free(temp);
             }
             break;
         }
@@ -253,13 +255,18 @@ int is_pwd(char *str)
 	return (0);
 }
 
-int ft_pwd(void)
+int ft_pwd(t_all **all)
 {
 	char cwd[PATH_MAX];
 	// printf("test");
 	if (getcwd(cwd, sizeof(cwd)))
 	{
 		return (printf("%s\n", cwd), 0);
+	}
+	else
+	{
+		perror("pwd: error retrieving current directory: getcwd: cannot access parent directories: ");
+		(*all)->exit_status = 1;
 	}
 	return (1);
 }
@@ -400,31 +407,69 @@ void	ft_putstr(char *str)
 	}
 }
 
-int	is_only_n(char *str)
+int    is_only_n(char *str)
 {
-	int i = 1;
+    int i = 1;
 
-	while (str[i])
-	{
-		if (str[i] != 'n')
-			return (0);
-		i++;
-	}
-	return (1);
+    while (str[i])
+    {
+        if (str[i] != 'n')
+            return (0);
+        i++;
+    }
+    return (1);
 }
 
+int    ft_echo(char **tab)
+{
+    int i = 1;
+    
+    if (!tab[1])
+        return (0);
+    if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
+    {
+        while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
+            i++;
+        if (tab[i])
+        {
+            while (tab[i])
+            {
+                ft_putstr(tab[i]);
+                if (tab[i + 1])
+                    write (1, " ", 1);
+                i++;
+            }
+            return (1);
+        }
+    }
+    else if (tab[1])
+    {
+        i = 1;
+        while (tab[i])
+        {
+            ft_putstr(tab[i]);
+            // write(1,"test",4);
+            if (tab[i + 1])
+                write (1, " ", 1);
+            i++;
+        }
+        write (1, "\n", 1);
+    }
+    return (0);
+}
+
+/*
 int	ft_echo(char **tab)
 {
-	int i = 1;
+	int i = 0;
 	
 	if (!tab[1])
 		return (0);
-	if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
+	if (tab[1] && ft_strcmp(tab[1], "-n") == 0)
 	{
-		while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
-			i++;
-		if (tab[i])
+		if (tab[2])
 		{
+			i = 2;
 			while (tab[i])
 			{
 				ft_putstr(tab[i]);
@@ -441,6 +486,7 @@ int	ft_echo(char **tab)
 		while (tab[i])
 		{
 			ft_putstr(tab[i]);
+			// write(1,"test",4);
 			if (tab[i + 1])
 				write (1, " ", 1);
 			i++;
@@ -449,7 +495,7 @@ int	ft_echo(char **tab)
 	}
 	return (0);
 }
-
+*/
 int ft_is_digit(char *str)
 {
 	int i = 0;
@@ -482,7 +528,7 @@ int ft_exit(char **tab, t_all **all)
 	if ((*all)->t_cmd->nbr_cmd == 1)
 		exit(ft_atoi(tab[1]) % 256);
 	else if ((*all)->t_cmd->nbr_cmd > 1)
-		(*all)->exit_status = ft_atoi(tab[1]) % 256;
+        (*all)->exit_status = ft_atoi(tab[1]) % 256;
 	return (0);
 }
 
@@ -507,7 +553,7 @@ int is_builtin_3(char **tab, t_all **all)
 	}
 	if (is_pwd(tab[0]))
 	{
-		ft_pwd();
+		ft_pwd(all);
 		return (1);
 	}
 	if (ft_strcmp(tab[0], "exit") == 0)

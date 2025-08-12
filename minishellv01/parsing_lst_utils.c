@@ -14,7 +14,7 @@
 
 t_list	*ft_lst(char *str, int state);
 void	ft_lstadd_back(t_list **lst, t_list *new);
-void ft_add(t_list **lst, char *str, int state);
+int  ft_add(t_list **lst, char *str, int state);
 
 t_list	*ft_lst(char *str, int state)
 {
@@ -26,6 +26,8 @@ t_list	*ft_lst(char *str, int state)
 		return (NULL);
 	}
 	newlist->str = ft_strdup(str);
+	if (!newlist->str)
+		return (NULL);
 	newlist->state = state;
 	newlist->next = NULL;
 	return (newlist);
@@ -49,12 +51,14 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 	*lst = temp;
 }
 
-void ft_add(t_list **lst, char *str, int state)
+int  ft_add(t_list **lst, char *str, int state)
 {
 	if (!(*lst))
 	{
 		(*lst) = ft_lst(str, state);
-		return ;
+		if (!(*lst))
+			return (-2);
+		return (0);
 	}
 	t_list *temp = *lst;
 	while ((*lst)->next)
@@ -62,6 +66,9 @@ void ft_add(t_list **lst, char *str, int state)
 		(*lst) = (*lst)->next;
 	}
 	(*lst)->next = ft_lst(str, state);
+	if (!(*lst)->next)
+			return (-2);
 	// (*lst)->next->state = state;
 	(*lst) = temp;
+	return (0);
 }

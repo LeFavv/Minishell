@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kevwang <kevwang@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 12:49:19 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/06 20:14:13 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/06/26 12:49:19 by kevwang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <readline/readline.h> // pour readline etc
 #include <readline/history.h> // pour readline etc
 #include <sys/types.h>//wait
 #include <sys/wait.h>//wait
 #include <sys/stat.h>//stat
-
+# include <signal.h>//signal
 # include "gnl/get_next_line.h"
+# include <errno.h>
+
+#include <termios.h> //tcget
 
 #define SINGLEQUOTE 1
 #define DOUBLEQUOTE 2
@@ -44,6 +48,7 @@
 
 #define PATH_MAX	4096
 
+
 typedef struct s_redir
 {
 	int infd;
@@ -61,6 +66,7 @@ typedef struct s_cmd_tab
 	int input_failed; // 1 si redirection d'entrée a échoué, 0 sinon
 	int output_failed;
 	
+	int id_here_doc;
 	int heredoc;
 	char *in_str;
 	char *out_str;
@@ -85,14 +91,38 @@ typedef struct s_minishell
 	// t_cmd_tab *cmd_tab;
 }t_list;
 
+typedef struct s_pid_cmd
+{
+	char *tab[3];
+	int fd[2];
+	int id1;
+}t_pid_cmd;
+
+typedef struct s_pid
+{
+	t_pid_cmd *cmd;
+	int outfd;
+}t_pid;
+
 typedef struct s_all
 {
 	t_list		*shell;
 	t_commande	*t_cmd;
 	t_redir		*t_red;
+	
+	char *str;
 	char **env;
 	int exit_status;
 	char *exit_status_char;
+
+	t_pid 		*t_pid;
+	char *pid_str;
+
+	struct termios        term;
+	
+	struct sigaction sigint;   // Pour SIGINT (Ctrl+C)
+	struct sigaction sigquit;  // Pour SIGQUIT (Ctrl+\)
+	struct sigaction sigeof;  // Pour SIGEOF (Ctrl+D)
 }t_all;
 
 char	**ft_split(char const *s, char c);
@@ -105,7 +135,7 @@ char	*ft_itoa(int n);
 int is_builtin(char **tab);
 int is_builtin2(char **tab, t_all **all);
 int is_builtin_3(char **tab, t_all **all);
-long ft_atoi(char *str);
+int ft_atoi(char *str);
 int ft_exit(char **tab, t_all **all);
 int ft_is_digit(char *str);
 
@@ -139,6 +169,7 @@ char *get_env_var(char *str, char **env);
 char *get_env_name(char *str, int start);
 char *replace_dollar_vars(char *str, char **env, t_all *all);
 char *replace_dollar_test2(char *str, char **env, t_all *all);
+char *replace_dollar_pour_de_vrai(char *str, t_all *all);
 
 //parsing_double_tab.c
 char	**ft_copy_double_tab(char **tab);
@@ -148,6 +179,7 @@ char **ft_remove_double_tab(char *str, char **tab);
 //parsing_free.c
 void	ft_free_double_tab(char **tab);
 void	ft_clear(t_list **lst);
+void ft_free_all(t_all *all);
 
 //parsing_init.c
 int ft_count_commands(t_list *lst);
@@ -155,7 +187,7 @@ int ft_count_commands(t_list *lst);
 //parsing_lst_utils.c
 t_list	*ft_lst(char *str, int state);
 void	ft_lstadd_back(t_list **lst, t_list *new);
-void ft_add(t_list **lst, char *str, int state);
+int ft_add(t_list **lst, char *str, int state);
 
 //parsing_lst_utils_2.c
 int ft_size(t_list *lst);
@@ -178,6 +210,9 @@ int ft_parse_pipe(char *str, t_list **shell, int *i);
 int ft_parse_out(char *str, t_list **shell, int *i);
 int ft_parse_in(char *str, t_list **shell, int *i);
 
+//parsing_pid.c
+char *ft_get_pid(t_all *all);
+
 //parsing_redir.c
 int ft_create_fd(t_list **shell, t_redir **t_red);
 
@@ -191,6 +226,26 @@ int ft_create_triple_tab(t_list **shell ,t_commande **t_cmd, t_all **all);
 
 //pipex_path
 void	ft_err(char *msg1, char *msg2);
+void	ft_err_2(char *msg1, char *msg2);
 int	exec(char **tab, char **env);
 
+//signals
+void setup_signals(t_all *all);
+void handle_sigint(int sig);
+void handle_sigquit(int sig);
+void handle_sigtstp(int sig);
+void restore_signals(void);
+void setup_child_signals(void);
+void setup_interactive_signals(void);
+int check_signal_received(void);
+void handle_background_sigint(int sig);
+
+// extern volatile sig_atomic_t g_signal_received;
+extern int g_sigvaleur;
+
+// Fonctions pour gérer l'exit code via static pointer
+void init_exit_handler(int *exit_status);
+void signal_set_exit(int code);
+
+void ft_test(int signum);
 #endif

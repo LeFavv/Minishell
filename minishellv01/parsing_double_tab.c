@@ -43,20 +43,39 @@ char **ft_add_double_tab(char *str, char **tab)
 	if (tab == NULL)
 	{
 		newtab = malloc(sizeof(char *) * 2);
+		if (!newtab)
+			return (NULL);
 		newtab[0] = ft_strdup(str);
+		if (!newtab[0])
+		{
+			free(newtab);
+			return (NULL);
+		}
 		newtab[1] = 0;
 		return (newtab);
 	}
 	while (tab[i])
 		i++;
 	newtab = malloc(sizeof(char *) * (i + 2));
+	if (!newtab)
+		return (NULL);
 	i = 0;
 	while (tab[i])
 	{
 		newtab[i] = ft_strdup(tab[i]);
+		if (!newtab[i])
+		{
+			ft_free_double_tab(newtab);
+			return (NULL);
+		}
 		i++;
 	}
 	newtab[i] = ft_strdup(str);
+	if (!newtab[i])
+	{
+		ft_free_double_tab(newtab);
+		return (NULL);
+	}
 	i++;
 	newtab[i] = 0;
 	ft_free_double_tab(tab);

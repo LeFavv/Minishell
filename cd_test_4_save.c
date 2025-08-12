@@ -33,6 +33,18 @@ char **ft_replace_double_tab(char *var_name, char *str, char **tab)
     i = 0;
     j = 0;
 	var_name_equal = malloc(sizeof(ft_strlen(var_name) + 2));
+	if (!var_name_equal)
+		return (NULL);
+	if (!str)
+		return (NULL);
+	if (!tab)
+	{
+		newtab = malloc(sizeof(char *) * 1);
+		if (!newtab)
+			return (free(var_name_equal), NULL);
+		newtab[0] = 0;
+		return (free(var_name_equal), newtab);
+	}
 	while (var_name && var_name[i])
 	{
 		var_name_equal[i] = var_name[i];
@@ -43,30 +55,57 @@ char **ft_replace_double_tab(char *var_name, char *str, char **tab)
     if (tab == NULL)
     {
         newtab = malloc(sizeof(char *) * 1);
+		if (!newtab)
+			return (free(var_name_equal), NULL);
         // newtab[0] = ft_strdup(str);
         newtab[0] = 0;
-        return (newtab);
+        return (free(var_name_equal), newtab);
     }
     while (tab[i])
         i++;
     newtab = malloc(sizeof(char *) * (i + 1));
+	if (!newtab)
+		return (free(var_name_equal), NULL);
     i = 0;
     while (tab[i])
     {
         if (ft_strncmp(tab[i], var_name, ft_strlen(var_name)) != 0)
         {
             newtab[i] = ft_strdup(tab[i]);
+			if (!newtab[i])
+			{
+				while (i > 0)
+				{
+					free(newtab[i - 1]);
+					i--;
+				}
+				free(var_name_equal);
+				free(newtab);
+				return (NULL);
+			}
         }
         else
         {
             newtab[i] = ft_strjoin(var_name_equal, (str));
+			if (!newtab[i])
+			{
+				while (i > 0)
+				{
+					free(newtab[i - 1]);
+					i--;
+				}
+				free(var_name_equal);
+				free(newtab);
+				return (NULL);
+			}
         }
         i++;
     }
     // newtab[i] = ft_strdup(str);
     // i++;
     newtab[i] = 0;
-    // ft_free_double_tab(tab);
+	free(var_name_equal);
+    ft_free_double_tab(tab);
     return (newtab);
 }
 
@@ -95,6 +134,19 @@ char *ft_strchr(char *str, char c)
 	return (NULL);
 }
 
+int is_alpha(char *str)
+{
+	int  i = 0;
+
+	while (str[i])
+	{
+		if (!((str[i] >='a' && str[i] <= 'z' ) || (str[i] >= 'A' && str[i] <= 'Z')))
+			return (0);
+		i++;
+	}
+		return (1);
+}
+
 int	ft_export(char **tab, t_all **all)
 {
     int i = 1;
@@ -104,18 +156,34 @@ int	ft_export(char **tab, t_all **all)
     while (tab[i])
     {
         equal_pos = ft_strchr(tab[i], '=');
+		if (!equal_pos && !is_alpha(tab[i]))
+			return (ft_err(tab[0], "not a valid identifier"), 1);
+		if (ft_strlen(tab[i]) == 1 && tab[i][0] == '=')
+			return (ft_err(tab[0], "not a valid identifier"), 1);
+		else if (!equal_pos && is_alpha(tab[i]))
+			return (0);
+		// if (!is_alpha(tab[i]))
+		// 	return (1);
         if (equal_pos)
         {
             var_name = ft_substr(tab[i], 0, equal_pos - tab[i]);
+			// char	*export_value = ft_substr(tab[i], ft_strlen(var_name) + 1, ft_strlen(tab[i]));
+			// if (!is_alpha(export_value) ||!is_alpha(var_name))
+			// 	return (0); // + free aussi my bad
+			if (!is_alpha(var_name) || !var_name)
+				return (ft_err(tab[0], "not a valid identifier"), 1); // + free aussi my bad
+			// printf("\n\n%s\n\n", var_name);
             if (!get_env_var(var_name, (*all)->env))
                 (*all)->env = ft_add_double_tab(tab[i], (*all)->env);
             else
                 (*all)->env = ft_replace_double_tab(var_name, equal_pos + 1, (*all)->env);
             free(var_name);
+			return (0);
         }
         i++;
     }
-    return (1);
+	printf("j'arrive ici\n");
+    return (0);
 }
 
 int ft_atoi(char *str)
@@ -155,7 +223,9 @@ void ft_shlvl(t_all **all)
             {
                 nb = ft_atoi(equal_pos + 1);
 				nb++;
-                (*all)->env = ft_replace_double_tab("SHLVL", ft_itoa(nb), (*all)->env);
+				char *temp = ft_itoa(nb);
+                (*all)->env = ft_replace_double_tab("SHLVL", temp, (*all)->env);
+                free(temp);
             }
             break;
         }
@@ -192,9 +262,13 @@ int	ft_env(t_all **all)
 
 int is_builtin_2(char **tab, t_all **all)
 {
+	int exit_code;
+
 	  if (is_export(tab[0]))
 	{
-		return (ft_export(tab, all)); 
+		exit_code = ft_export(tab, all);
+		(*all)->exit_status = exit_code;
+		return (1); 
 	}
 	 if (ft_strcmp(tab[0], "unset") == 0)
 	{
@@ -220,13 +294,18 @@ int is_pwd(char *str)
 	return (0);
 }
 
-int ft_pwd(void)
+int ft_pwd(t_all **all)
 {
 	char cwd[PATH_MAX];
 	// printf("test");
 	if (getcwd(cwd, sizeof(cwd)))
 	{
 		return (printf("%s\n", cwd), 0);
+	}
+	else
+	{
+		perror("pwd: error retrieving current directory: getcwd: cannot access parent directories: ");
+		(*all)->exit_status = 1;
 	}
 	return (1);
 }
@@ -324,7 +403,8 @@ int	homemade_cd(char **tab, t_all **all)
 	if (tab[2])
 	{
 		// printf("2\n");
-		return (perror("cd : too may arguemtents"), 1);
+		// return (perror("cd : too may arguemtents"), 1);
+		return (ft_err(tab[0], "too many arguments"), 1);
 	}
 	if (is_cd(tab[0]) && (!tab[1] || is_home(tab[1])))
 	{
@@ -346,7 +426,7 @@ int	homemade_cd(char **tab, t_all **all)
 		// printf("6");
 		return (ft_cd_change_dir(all, tab[1]));
 	}
-	return (0);
+	return (1);
 }
 
 int	is_echo(char *str)
@@ -366,6 +446,58 @@ void	ft_putstr(char *str)
 	}
 }
 
+int    is_only_n(char *str)
+{
+    int i = 1;
+
+    while (str[i])
+    {
+        if (str[i] != 'n')
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+int    ft_echo(char **tab)
+{
+    int i = 1;
+    
+    if (!tab[1])
+        return (0);
+    if (tab[i] && ft_strncmp(tab[i], "-n", 2) == 0)
+    {
+        while (tab[i] && tab[i][0] == '-' && is_only_n(tab[i]))
+            i++;
+        if (tab[i])
+        {
+            while (tab[i])
+            {
+                ft_putstr(tab[i]);
+                if (tab[i + 1])
+                    write (1, " ", 1);
+                i++;
+            }
+            return (1);
+        }
+    }
+    else if (tab[1])
+    {
+        i = 1;
+        while (tab[i])
+        {
+            ft_putstr(tab[i]);
+            // write(1,"test",4);
+            if (tab[i + 1])
+                write (1, " ", 1);
+            i++;
+        }
+        write (1, "\n", 1);
+    }
+    return (0);
+}
+
+/*
 int	ft_echo(char **tab)
 {
 	int i = 0;
@@ -402,31 +534,88 @@ int	ft_echo(char **tab)
 	}
 	return (0);
 }
+*/
+int ft_is_digit(char *str)
+{
+	int i = 0;
+	if (str[0] == '+' || str[0] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!(str[i] >= '0' && str[i] <= '9'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int ft_exit(char **tab, t_all **all)
+{
+	if (!ft_is_digit(tab[1]))
+	{
+		write(1, "exit\n", 5); //sortie 1 ou 2 
+		ft_err(tab[1], "numeric argument required");
+		exit (2);
+	}
+	if (tab[2])
+	{
+		write(1, "exit\n", 5); //sortie 1 ou 2 
+		ft_err(tab[1], "too many arguments");
+		(*all)->exit_status = 1;
+		return (1);
+	}
+	if ((*all)->t_cmd->nbr_cmd == 1)
+		exit(ft_atoi(tab[1]) % 256);
+	else if ((*all)->t_cmd->nbr_cmd > 1)
+        (*all)->exit_status = ft_atoi(tab[1]) % 256;
+	return (0);
+}
 
 int is_builtin_3(char **tab, t_all **all)
 {
+	int exit_code;
+
 	if (is_cd(tab[0]))
 	{
 		// printf("cd in\n");
-		homemade_cd(tab, all);
+		exit_code = homemade_cd(tab, all);
+		(*all)->exit_status = exit_code;
+		// printf("exit code cd = %d\n\n", exit_code);
+		// printf("exit status cd = %d\n\n", (*all)->exit_status);
 		return (1);
 	}
 	 if (is_echo(tab[0]))
 	{
-		ft_echo(tab);		
+		exit_code = ft_echo(tab);		
+		(*all)->exit_status = exit_code;
 		return (1);
 	}
 	if (is_pwd(tab[0]))
 	{
-		ft_pwd();
+		ft_pwd(all);
 		return (1);
 	}
 	if (ft_strcmp(tab[0], "exit") == 0)
 	{
-		if (tab[2] != NULL)
-			return (0);
-		
-		exit(ft_atoi(tab[1]) % 256);
+		ft_exit(tab, all);
+		return (1);
+		// if (tab[2] != NULL)
+		// 	return (0);
+		// if (!ft_is_digit(tab[1]))
+		// {
+		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
+		// 	ft_err(tab[1], "numeric argument required");
+		// 	exit (2);
+		// }
+		// if (tab[2])
+		// {
+		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
+		// 	ft_err(tab[1], "too many arguments");
+		// 	(*all)->exit_status = 1;
+		// 	return (1);
+		// }
+		// if ((*all)->t_cmd->nbr_cmd == 1)
+		// 	exit(ft_atoi(tab[1]) % 256);
 		return (1);
 	}
 	if (is_builtin_2(tab, all))

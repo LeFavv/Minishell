@@ -44,6 +44,8 @@ parsing_redir.c \
 parsing_lst_utils_2.c \
 parsing_init.c \
 cd_test_4.c \
+# parsing_pid.c \
+# signals.c \
 # cd_test2.c
 
 SRC = ${FILE:.c=.o}
@@ -79,7 +81,7 @@ clean:
 	parsing_redir.o \
 	parsing_lst_utils_2.o \
 	parsing_init.o \
-	cd_test2.o \
+	cd_test_4.o \
 	cd_test.o \
 
 fclean:clean

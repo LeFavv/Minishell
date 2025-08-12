@@ -1,0 +1,41 @@
+echo \\\\\\
+
+export a=b
+echo $"a"
+output: $a
+
+echo "$a '$a'" 
+
+echo - "" "   " hello
+
+echo "hi" | cat -e | cat -e
+
+echo ~
+/home/kevwang
+
+echo "~"
+~
+
+echo $((23+7))
+30
+./minishell
+CacaTest >echo $((23+57))
+((23+57))
+
+<infile cat -e > outfile > out > ou
+
+<<<infile cat -e| cat -e>outfile 
+
+ctrl+c -> echo$?=130
+
+< (tous seul) segfault
+
+echo "hello'$a'"  'hello"$a"' hello"$a" hello'$a'
+
+echo "1$a hello'$a'" '2$a hello"$a"' 3$a hello"$a" 4$a hello'$a'
+
+echo te"$a"st'world'
+
+cat -e < infile > s1 | echo abc | < infile cat -e > s2 > s3
+
+cat -e < infile > s1 | cat -e | cat -e > s2 > s3

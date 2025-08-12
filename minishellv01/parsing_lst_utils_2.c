@@ -90,21 +90,37 @@ int	ft_lstiter_env(t_list **lst, char **env, t_all *all)
 		{
 			return (ft_err("syntax error near unexpected token `|'\n", NULL), -1);
 		}
+		if ((*lst)->state == INPUT && (*lst)->next
+			&& ((*lst)->next->state != NORMAL && (*lst)->next->state != SINGLEQUOTE
+			&& (*lst)->next->state != DOUBLEQUOTE))
+			return (ft_err_2("syntax error near unexpected token ", (*lst)->next->str), -1);
 		if ((*lst)->state == INPUT && (*lst)->next)
 			(*lst)->next->state = INFILE;
 		else if ((*lst)->state == INPUT && !(*lst)->next)
 			return (ft_err("syntax error near unexpected token `newline'\n", NULL), -1);
-
+		
+		if ((*lst)->state == HEREDOC && (*lst)->next
+			&& ((*lst)->next->state != NORMAL && (*lst)->next->state != SINGLEQUOTE
+			&& (*lst)->next->state != DOUBLEQUOTE))
+			return (ft_err_2("syntax error near unexpected token ", (*lst)->next->str), -1);
 		if ((*lst)->state == HEREDOC && (*lst)->next)
 			(*lst)->next->state = LIMITER;
 		else if ((*lst)->state == HEREDOC && !(*lst)->next)
 			return (ft_err("syntax error near unexpected token `newline'\n", NULL), -1);
 
+		if ((*lst)->state == OUTPUT && (*lst)->next
+			&& ((*lst)->next->state != NORMAL && (*lst)->next->state != SINGLEQUOTE
+			&& (*lst)->next->state != DOUBLEQUOTE))
+			return (ft_err_2("syntax error near unexpected token ", (*lst)->next->str), -1);
 		if ((*lst)->state == OUTPUT && (*lst)->next)
 			(*lst)->next->state = OUTFILE;
 		else if ((*lst)->state == OUTPUT && !(*lst)->next)
 			return (ft_err("syntax error near unexpected token `newline'\n", NULL), -1);
 
+		if ((*lst)->state == APPEND && (*lst)->next
+			&& ((*lst)->next->state != NORMAL && (*lst)->next->state != SINGLEQUOTE
+			&& (*lst)->next->state != DOUBLEQUOTE))
+			return (ft_err_2("syntax error near unexpected token ", (*lst)->next->str), -1);
 		if ((*lst)->state == APPEND && (*lst)->next)
 			(*lst)->next->state = OUTFILEAPPEND;
 		else if ((*lst)->state == APPEND && !(*lst)->next)

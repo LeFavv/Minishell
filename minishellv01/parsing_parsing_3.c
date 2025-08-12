@@ -28,9 +28,14 @@ int ft_parse_pipe(char *str, t_list **shell, int *i)
 	if (j > 0)
 	{
 		temp = ft_substr(str, *i, j);
+		if (!temp)
+			return (-2);
 		// tab = ft_add_double_tab(temp, tab);
 		if (ft_strlen(temp) == 1)
-			ft_add(shell, temp, PIPE);
+		{
+			if (ft_add(shell, temp, PIPE) == -2)
+				return (free(temp), -2);
+		}
 		else if (ft_strlen(temp) == 2)
 			return (free(temp), ft_err("syntax error near unexpected token `||'\n", NULL), -1);
 			// ft_add(shell, temp, ERROR);
@@ -58,11 +63,19 @@ int ft_parse_out(char *str, t_list **shell, int *i)
 	if (j > 0)
 	{
 		temp = ft_substr(str, *i, j);
+		if (!temp)
+			return (-2);
 		// tab = ft_add_double_tab(temp, tab);
 		if (ft_strlen(temp) == 1)
-			ft_add(shell, temp, OUTPUT);
+		{
+			if (ft_add(shell, temp, OUTPUT) == -2)
+				return (free(temp), -2);
+		}
 		else if (ft_strlen(temp) == 2)
-			ft_add(shell, temp, APPEND);
+		{
+			if (ft_add(shell, temp, APPEND) == -2)
+				return (free(temp), -2);
+		}
 		else if (ft_strlen(temp) == 3)
 			return (free(temp), ft_err("syntax error near unexpected token `>'\n", NULL), -1);
 			// ft_add(shell, temp, ERROR);
@@ -90,11 +103,19 @@ int ft_parse_in(char *str, t_list **shell, int *i)
 	if (j > 0)
 	{
 		temp = ft_substr(str, *i, j);
+		if (!temp)
+			return (-2);
 		// tab = ft_add_double_tab(temp, tab);
 		if (ft_strlen(temp) == 1)
-			ft_add(shell, temp, INPUT);
+		{
+			if (ft_add(shell, temp, INPUT) == -2)
+				return (free(temp), -2);
+		}
 		else if (ft_strlen(temp) == 2)
-			ft_add(shell, temp, HEREDOC);
+		{
+			if (ft_add(shell, temp, HEREDOC) == -2)
+				return (free(temp), -2);
+		}
 		else if (ft_strlen(temp) == 3)
 			return (free(temp), ft_err("syntax error near unexpected token `<'\n", NULL), -1);
 			// ft_add(shell, temp, ERROR);

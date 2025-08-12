@@ -79,10 +79,133 @@ char *get_env_name(char *str, int start)
 	return (ft_substr(str, start, len));
 }
 
-//Deuxieme etape du parsing
-//expand les $ sauf dans les singlequote
-//enleve les quotes non literal
-//recupere le exit status avec $?
+//Remplace uniquement les variables avec $ sauf dans les single quotes
+//traite $? pour exit status, $$ pour PID, et $VAR pour variables d'environnement
+char *replace_dollar_pour_de_vrai(char *str, t_all *all)
+{
+    int i;
+    char *result;
+    char *env_name;
+    char *env_var;
+    char *temp;
+    int len;
+    int insinglequote;
+
+    insinglequote = 0;
+    result = malloc(sizeof(char) * 1);
+    if (!result)
+        return (NULL);
+    result[0] = '\0';
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == '\'' && insinglequote == 0)
+        {
+            insinglequote = 1;
+            len = ft_strlen(result);
+            temp = malloc(sizeof(char) * (len + 2));
+            if (!temp)
+                return (NULL);
+            ft_strcpy(temp, result);
+            temp[len] = str[i];
+            temp[len + 1] = '\0';
+            free(result);
+            result = temp;
+            i++;
+        }
+        else if (str[i] == '\'' && insinglequote == 1)
+        {
+            insinglequote = 0;
+            len = ft_strlen(result);
+            temp = malloc(sizeof(char) * (len + 2));
+            if (!temp)
+                return (NULL);
+            ft_strcpy(temp, result);
+            temp[len] = str[i];
+            temp[len + 1] = '\0';
+            free(result);
+            result = temp;
+            i++;
+        }
+        else if (str[i] == '$' && str[i + 1] != '\0' && insinglequote == 0)
+        {
+            if (str[i + 1] == '?')
+            {
+                all->exit_status_char = ft_itoa(all->exit_status);
+                if (!all->exit_status_char)
+                    return (NULL);
+                temp = ft_strjoin(result, all->exit_status_char);
+                if (!temp)
+                {
+                    free(all->exit_status_char);
+                    return (NULL);
+                }
+                free(result);
+                result = temp;
+                free(all->exit_status_char);
+                i += 2;
+            }
+            else if (str[i + 1] == '$')
+            {
+                temp = ft_strjoin(result, all->pid_str);
+                if (!temp)
+                    return (NULL);
+                free(result);
+                result = temp;
+                i += 2;
+            }
+            else
+            {
+                env_name = get_env_name(str, i + 1);
+                if (env_name)
+                {
+                    env_var = get_env_var(env_name, all->env);
+                    if (env_var)
+                    {
+                        temp = ft_strjoin(result, env_var);
+                        if (!temp)
+                        {
+                            free(env_name);
+                            return (NULL);
+                        }
+                        free(result);
+                        result = temp;
+                    }
+                    i = i + ft_strlen(env_name) + 1;
+                    free(env_name);
+                }
+                else
+                {
+                    len = ft_strlen(result);
+                    temp = malloc(sizeof(char) * (len + 2));
+                    if (!temp)
+                        return (NULL);
+                    ft_strcpy(temp, result);
+                    temp[len] = str[i];
+                    temp[len + 1] = '\0';
+                    free(result);
+                    result = temp;
+                    i++;
+                }
+            }
+        }
+        else
+        {
+            len = ft_strlen(result);
+            temp = malloc(sizeof(char) * (len + 2));
+            if (!temp)
+                return (NULL);
+            ft_strcpy(temp, result);
+            temp[len] = str[i];
+            temp[len + 1] = '\0';
+            free(result);
+            result = temp;
+            i++;
+        }
+    }
+    return (result);
+}
+
 char *replace_dollar_test2(char *str, char **env, t_all *all)
 {
     int i;
@@ -93,6 +216,10 @@ char *replace_dollar_test2(char *str, char **env, t_all *all)
     int len;
     int indoublequote;
     int insinglequote;
+    (void)env_name;
+    (void)env_var;
+    (void)env;
+    (void)all;
 
     indoublequote = 0;
     insinglequote = 0;
@@ -203,15 +330,36 @@ char *replace_dollar_test2(char *str, char **env, t_all *all)
         {
             i++;
         }
+        
+
+
         else if (str[i] == '$' && str[i + 1] != '\0' && insinglequote == 0)
         {
             if (str[i + 1] == '?')
             {
                 all->exit_status_char = ft_itoa(all->exit_status);
+                if (!all->exit_status_char)
+                    return (NULL);
                 temp = ft_strjoin(result, all->exit_status_char);
+                if (!temp)
+                {
+                    free(all->exit_status_char);
+                    return (NULL);
+                }
                 free(result);
                 result = temp;
                 free(all->exit_status_char);
+                i += 2;
+            }
+            else if (str[i + 1] == '$')
+            {
+                // all->exit_status_char = ft_itoa(all->exit_status);
+                temp = ft_strjoin(result, all->pid_str);
+                if (!temp)
+                    return (NULL);
+                free(result);
+                result = temp;
+                // free(all->pid_str);
                 i += 2;
             }
             else
@@ -223,6 +371,11 @@ char *replace_dollar_test2(char *str, char **env, t_all *all)
                     if (env_var)
                     {
                         temp = ft_strjoin(result, env_var);
+                        if (!temp)
+                        {
+                            free(env_name);
+                            return (NULL);
+                        }
                         free(result);
                         result = temp;
                     }
@@ -244,6 +397,9 @@ char *replace_dollar_test2(char *str, char **env, t_all *all)
                 }
             }
         }
+
+
+        
         else
         {
             len = ft_strlen(result);
