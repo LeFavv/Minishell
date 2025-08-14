@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 07:05:17 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/14 07:55:08 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/14 07:56:15 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ char	**new_tab_init(char **tab, char *str, char *v_n, char *v_n_e)
 	i = 0;
 	newtab = malloc(sizeof(char *) * (find_char_tab_size(tab) + 1));
 	if (!newtab)
-		return (free(var_name_equal), NULL);
+		return (free(v_n_e), NULL);
 	while (tab[i])
 	{
-		if (ft_strncmp(tab[i], var_name, ft_strlen(var_name)) != 0)
+		if (ft_strncmp(tab[i], v_n, ft_strlen(v_n)) != 0)
 		{
 			newtab[i] = ft_strdup(tab[i]);
 			if (!newtab[i])
@@ -71,7 +71,7 @@ char	**new_tab_init(char **tab, char *str, char *v_n, char *v_n_e)
 		}
 		else
 		{
-			newtab[i] = ft_strjoin(var_name_equal, str);
+			newtab[i] = ft_strjoin(v_n_e, str);
 			if (!newtab[i])
 				return (NULL);
 		}
