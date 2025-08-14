@@ -229,30 +229,30 @@ int is_alpha(char *str)
 // 	return (nb * sign);
 // }
 
-void ft_shlvl(t_all **all)
-{
-    int i = 0;
-    char *equal_pos;
-    int nb = 0;
+// void ft_shlvl(t_all **all)
+// {
+//     int i = 0;
+//     char *equal_pos;
+//     int nb = 0;
 
-    while ((*all)->env[i])
-    {
-        if (ft_strncmp((*all)->env[i], "SHLVL=", 6) == 0)
-        {
-            equal_pos = ft_strchr((*all)->env[i], '=');
-            if (equal_pos && *(equal_pos + 1))
-            {
-                nb = ft_atoi(equal_pos + 1);
-				nb++;
-				char *temp = ft_itoa(nb);
-                (*all)->env = ft_replace_double_tab("SHLVL", temp, (*all)->env);
-                free(temp);
-            }
-            break;
-        }
-        i++;
-    }
-}
+//     while ((*all)->env[i])
+//     {
+//         if (ft_strncmp((*all)->env[i], "SHLVL=", 6) == 0)
+//         {
+//             equal_pos = ft_strchr((*all)->env[i], '=');
+//             if (equal_pos && *(equal_pos + 1))
+//             {
+//                 nb = ft_atoi(equal_pos + 1);
+// 				nb++;
+// 				char *temp = ft_itoa(nb);
+//                 (*all)->env = ft_replace_double_tab("SHLVL", temp, (*all)->env);
+//                 free(temp);
+//             }
+//             break;
+//         }
+//         i++;
+//     }
+// }
 
 //return value unset = 0 a chaque fois ??
 // int	ft_unset(char **tab, t_all **all)
@@ -280,29 +280,29 @@ void ft_shlvl(t_all **all)
 // 	return (0);
 // }
 
-int is_builtin_2(char **tab, t_all **all)
-{
-	int exit_code;
+// int is_builtin_2(char **tab, t_all **all)
+// {
+// 	int exit_code;
 
-	if (is_export(tab[0]))
-	{
-		exit_code = ft_export(tab, all);
-		(*all)->exit_status = exit_code;
-		return (1); 
-	}
-	if (ft_strcmp(tab[0], "unset") == 0)
-    {
-        exit_code = ft_unset(tab, all);
-        (*all)->exit_status = exit_code;
-        return (1);
-    }
-	 if (ft_strcmp(tab[0], "env") == 0 && !tab[1])
-	{
-		ft_env(all);
-		return (1);
-	}
-	return (0);
-}
+// 	if (is_export(tab[0]))
+// 	{
+// 		exit_code = ft_export(tab, all);
+// 		(*all)->exit_status = exit_code;
+// 		return (1); 
+// 	}
+// 	if (ft_strcmp(tab[0], "unset") == 0)
+//     {
+//         exit_code = ft_unset(tab, all);
+//         (*all)->exit_status = exit_code;
+//         return (1);
+//     }
+// 	 if (ft_strcmp(tab[0], "env") == 0 && !tab[1])
+// 	{
+// 		ft_env(all);
+// 		return (1);
+// 	}
+// 	return (0);
+// }
 
 // int is_pwd(char *str)
 // {
@@ -505,18 +505,18 @@ int is_builtin_2(char **tab, t_all **all)
 // 	}
 // }
 
-int    is_only_n(char *str)
-{
-    int i = 1;
+// int    is_only_n(char *str)
+// {
+//     int i = 1;
 
-    while (str[i])
-    {
-        if (str[i] != 'n')
-            return (0);
-        i++;
-    }
-    return (1);
-}
+//     while (str[i])
+//     {
+//         if (str[i] != 'n')
+//             return (0);
+//         i++;
+//     }
+//     return (1);
+// }
 
 // int    ft_echo(char **tab)
 // {
@@ -594,90 +594,90 @@ int	ft_echo(char **tab)
 	return (0);
 }
 */
-int ft_is_digit(char *str)
-{
-	int i = 0;
-	if (str[0] == '+' || str[0] == '-')
-		i++;
-	while (str[i])
-	{
-		if (!(str[i] >= '0' && str[i] <= '9'))
-			return (0);
-		i++;
-	}
-	return (1);
-}
+// int ft_is_digit(char *str)
+// {
+// 	int i = 0;
+// 	if (str[0] == '+' || str[0] == '-')
+// 		i++;
+// 	while (str[i])
+// 	{
+// 		if (!(str[i] >= '0' && str[i] <= '9'))
+// 			return (0);
+// 		i++;
+// 	}
+// 	return (1);
+// }
 
-int ft_exit(char **tab, t_all **all)
-{
-	if (!ft_is_digit(tab[1]))
-	{
-		write(1, "exit\n", 5); //sortie 1 ou 2 
-		ft_err(tab[1], "numeric argument required");
-		exit (2);
-	}
-	if (tab[2])
-	{
-		write(1, "exit\n", 5); //sortie 1 ou 2 
-		ft_err(tab[1], "too many arguments");
-		(*all)->exit_status = 1;
-		return (1);
-	}
-	if ((*all)->t_cmd->nbr_cmd == 1)
-		exit(ft_atoi(tab[1]) % 256);
-	else if ((*all)->t_cmd->nbr_cmd > 1)
-        (*all)->exit_status = ft_atoi(tab[1]) % 256;
-	return (0);
-}
+// int ft_exit(char **tab, t_all **all)
+// {
+// 	if (!ft_is_digit(tab[1]))
+// 	{
+// 		write(1, "exit\n", 5); //sortie 1 ou 2 
+// 		ft_err(tab[1], "numeric argument required");
+// 		exit (2);
+// 	}
+// 	if (tab[2])
+// 	{
+// 		write(1, "exit\n", 5); //sortie 1 ou 2 
+// 		ft_err(tab[1], "too many arguments");
+// 		(*all)->exit_status = 1;
+// 		return (1);
+// 	}
+// 	if ((*all)->t_cmd->nbr_cmd == 1)
+// 		exit(ft_atoi(tab[1]) % 256);
+// 	else if ((*all)->t_cmd->nbr_cmd > 1)
+//         (*all)->exit_status = ft_atoi(tab[1]) % 256;
+// 	return (0);
+// }
 
-int is_builtin_3(char **tab, t_all **all)
-{
-	int exit_code;
+// int is_builtin_3(char **tab, t_all **all)
+// {
+// 	int exit_code;
 
-	if (is_cd(tab[0]))
-	{
-		// printf("cd in\n");
-		exit_code = homemade_cd(tab, all);
-		(*all)->exit_status = exit_code;
-		// printf("exit code cd = %d\n\n", exit_code);
-		// printf("exit status cd = %d\n\n", (*all)->exit_status);
-		return (1);
-	}
-	 if (is_echo(tab[0]))
-	{
-		exit_code = ft_echo(tab);		
-		(*all)->exit_status = exit_code;
-		return (exit_code);
-	}
-	if (is_pwd(tab[0]))
-	{
-		ft_pwd(all);
-		return (1);
-	}
-	if (ft_strcmp(tab[0], "exit") == 0)
-	{
-		ft_exit(tab, all);
-		return (1);
-		// if (tab[2] != NULL)
-		// 	return (0);
-		// if (!ft_is_digit(tab[1]))
-		// {
-		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
-		// 	ft_err(tab[1], "numeric argument required");
-		// 	exit (2);
-		// }
-		// if (tab[2])
-		// {
-		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
-		// 	ft_err(tab[1], "too many arguments");
-		// 	(*all)->exit_status = 1;
-		// 	return (1);
-		// }
-		// if ((*all)->t_cmd->nbr_cmd == 1)
-		// 	exit(ft_atoi(tab[1]) % 256);
-		return (1);
-	}
-	if (is_builtin_2(tab, all))
-		return (1);
-	return (0);
-}
+// 	if (is_cd(tab[0]))
+// 	{
+// 		// printf("cd in\n");
+// 		exit_code = homemade_cd(tab, all);
+// 		(*all)->exit_status = exit_code;
+// 		// printf("exit code cd = %d\n\n", exit_code);
+// 		// printf("exit status cd = %d\n\n", (*all)->exit_status);
+// 		return (1);
+// 	}
+// 	 if (is_echo(tab[0]))
+// 	{
+// 		exit_code = ft_echo(tab);		
+// 		(*all)->exit_status = exit_code;
+// 		return (exit_code);
+// 	}
+// 	if (is_pwd(tab[0]))
+// 	{
+// 		ft_pwd(all);
+// 		return (1);
+// 	}
+// 	if (ft_strcmp(tab[0], "exit") == 0)
+// 	{
+// 		ft_exit(tab, all);
+// 		return (1);
+// 		// if (tab[2] != NULL)
+// 		// 	return (0);
+// 		// if (!ft_is_digit(tab[1]))
+// 		// {
+// 		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
+// 		// 	ft_err(tab[1], "numeric argument required");
+// 		// 	exit (2);
+// 		// }
+// 		// if (tab[2])
+// 		// {
+// 		// 	write(1, "exit\n", 5); //sortie 1 ou 2 
+// 		// 	ft_err(tab[1], "too many arguments");
+// 		// 	(*all)->exit_status = 1;
+// 		// 	return (1);
+// 		// }
+// 		// if ((*all)->t_cmd->nbr_cmd == 1)
+// 		// 	exit(ft_atoi(tab[1]) % 256);
+// 		return (1);
+// 	}
+// 	if (is_builtin_2(tab, all))
+// 		return (1);
+// 	return (0);
+// }

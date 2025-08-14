@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 12:49:19 by kevwang           #+#    #+#             */
-/*   Updated: 2025/08/14 06:43:30 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/14 07:57:11 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,10 @@ int ft_is_digit(char *str);
 int ft_exit(char **tab, t_all **all);
 int is_builtin_3(char **tab, t_all **all);
 int is_builtin_2(char **tab, t_all **all);
-
+char	**ft_replace_double_tab(char *var_name, char *str, char **tab);
+int		find_char_tab_size(char **tab);
+char	**new_tab_init(char **tab, char *str, char *v_n, char *v_n_e);
+char	*var_name_equal_init(char *var_name);
 
 //exec_check_exit_status.c
 void		ft_check_exit_status(t_all **all);

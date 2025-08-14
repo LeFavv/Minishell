@@ -6,7 +6,7 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/08/14 07:45:53 by vafavard         ###   ########.fr        #
+#    Updated: 2025/08/14 08:12:59 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,7 +56,9 @@ builtin_echo.c \
 builtin_export.c \
 builtin_utils.c \
 builtin_unset.c \
-builtin_utils_2.c
+builtin_utils_2.c \
+builtin_if_its.c \
+builtin_utils_3.c 
 
 # parsing_pid.c \
 
@@ -110,7 +112,10 @@ clean:
 	builtin_export.o \
 	builtin_utils.o \
 	builtin_unset.o \
-	builtin_utils_2.o
+	builtin_utils_2.o \
+	builtin_if_its.o \
+	builtin_utils_3.o 
+
 
 
 
