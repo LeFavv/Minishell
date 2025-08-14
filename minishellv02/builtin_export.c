@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 17:54:08 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/12 18:50:57 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/14 06:50:30 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int		is_export(char *str);
 int		is_alpha(char *str);
-void	if_equal_pos(t_all **all, char *var_name, char **tab, char *equal_pos);
+void	if_equal_pos(t_all **all, char *var_name, char *tab, char *equal_pos);
 int		if_equal_pos_return(char *var_name, char **tab);
 int		ft_export(char **tab, t_all **all);
 
@@ -54,10 +54,10 @@ int	is_alpha(char *str)
 	return (1);
 }
 
-void	if_equal_pos(t_all **all, char *v_n, char **tab, char *equal_pos)
+void	if_equal_pos(t_all **all, char *v_n, char *tab, char *equal_pos)
 {
 	if (!get_env_var(v_n, (*all)->env))
-		(*all)->env = ft_add_double_tab(*tab, (*all)->env);
+		(*all)->env = ft_add_double_tab(tab, (*all)->env);
 	else
 		(*all)->env = ft_replace_double_tab(v_n, equal_pos + 1, (*all)->env);
 }
@@ -92,7 +92,7 @@ int	ft_export(char **tab, t_all **all)
 			var_name = ft_substr(tab[i], 0, equal_pos - tab[i]);
 			if (!var_name || (is_alpha(var_name) == 0 || !var_name))
 				return (if_equal_pos_return(var_name, tab));
-			if_equal_pos(all, var_name, &(*tab), equal_pos);
+			if_equal_pos(all, var_name, tab[i], equal_pos);
 			free(var_name);
 		}
 		i++;

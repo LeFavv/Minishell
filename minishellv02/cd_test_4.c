@@ -23,69 +23,69 @@ void	ft_putstr(char *str);
 // 	return (s1[i] - s2[i]);
 // }
 
-char **ft_replace_double_tab(char *var_name, char *str, char **tab)
-{
-	int		i;
-	int		j;
-	char	**newtab;
-	char	*var_name_equal;
+// char **ft_replace_double_tab(char *var_name, char *str, char **tab)
+// {
+// 	int		i;
+// 	int		j;
+// 	char	**newtab;
+// 	char	*var_name_equal;
 	
-	i = 0;
-	j = 0;
-	if (!var_name || !str)
-		return (tab);
-	var_name_equal = malloc(ft_strlen(var_name) + 2);
-	if (!var_name_equal)
-		return (NULL);
-	while (var_name[i])
-	{
-		var_name_equal[i] = var_name[i];
-		i++;
-	}
-	var_name_equal[i] = '=';
-	var_name_equal[i + 1] = '\0';
-	if (tab == NULL)
-	{
-		newtab = malloc(sizeof(char *) * 1);
-		if (!newtab)
-			return (free(var_name_equal), NULL);
-		newtab[0] = 0;
-		return (free(var_name_equal), newtab);
-	}
-	while (tab[i])
-		i++;
-	newtab = malloc(sizeof(char *) * (i + 1));
-	if (!newtab)
-		return (free(var_name_equal), NULL);
-	i = 0;
-	while (tab[i])
-	{
-		if (ft_strncmp(tab[i], var_name, ft_strlen(var_name)) != 0)
-		{
-			newtab[j] = ft_strdup(tab[i]);
-			if (!newtab[j])
-			{
-				ft_free_double_tab(newtab);
-				return (free(var_name_equal), NULL);
-			}
-		}
-		else
-		{
-			newtab[j] = ft_strjoin(var_name_equal, str);
-			if (!newtab[j])
-			{
-				ft_free_double_tab(newtab);
-				return (free(var_name_equal), NULL);
-			}
-		}
-		i++;
-		j++;
-	}
-	newtab[j] = 0;
-	free(var_name_equal);
-	ft_free_double_tab(tab);
-	return (newtab);
-}
+// 	i = 0;
+// 	j = 0;
+// 	if (!var_name || !str)
+// 		return (tab);
+// 	var_name_equal = malloc(ft_strlen(var_name) + 2);
+// 	if (!var_name_equal)
+// 		return (NULL);
+// 	while (var_name[i])
+// 	{
+// 		var_name_equal[i] = var_name[i];
+// 		i++;
+// 	}
+// 	var_name_equal[i] = '=';
+// 	var_name_equal[i + 1] = '\0';
+// 	if (tab == NULL)
+// 	{
+// 		newtab = malloc(sizeof(char *) * 1);
+// 		if (!newtab)
+// 			return (free(var_name_equal), NULL);
+// 		newtab[0] = 0;
+// 		return (free(var_name_equal), newtab);
+// 	}
+// 	while (tab[i])
+// 		i++;
+// 	newtab = malloc(sizeof(char *) * (i + 1));
+// 	if (!newtab)
+// 		return (free(var_name_equal), NULL);
+// 	i = 0;
+// 	while (tab[i])
+// 	{
+// 		if (ft_strncmp(tab[i], var_name, ft_strlen(var_name)) != 0)
+// 		{
+// 			newtab[j] = ft_strdup(tab[i]);
+// 			if (!newtab[j])
+// 			{
+// 				ft_free_double_tab(newtab);
+// 				return (free(var_name_equal), NULL);
+// 			}
+// 		}
+// 		else
+// 		{
+// 			newtab[j] = ft_strjoin(var_name_equal, str);
+// 			if (!newtab[j])
+// 			{
+// 				ft_free_double_tab(newtab);
+// 				return (free(var_name_equal), NULL);
+// 			}
+// 		}
+// 		i++;
+// 		j++;
+// 	}
+// 	newtab[j] = 0;
+// 	free(var_name_equal);
+// 	ft_free_double_tab(tab);
+// 	return (newtab);
+// }
 
 // int is_export(char *str)
 // {
@@ -255,30 +255,30 @@ void ft_shlvl(t_all **all)
 }
 
 //return value unset = 0 a chaque fois ??
-int	ft_unset(char **tab, t_all **all)
-{
-    int i = 1;
-    while (tab[i])
-    {
-        if (get_env_var(tab[i], (*all)->env))
-            (*all)->env = ft_remove_double_tab(tab[i], (*all)->env);
-        i++;
-    }
-    return (0);
-}
+// int	ft_unset(char **tab, t_all **all)
+// {
+//     int i = 1;
+//     while (tab[i])
+//     {
+//         if (get_env_var(tab[i], (*all)->env))
+//             (*all)->env = ft_remove_double_tab(tab[i], (*all)->env);
+//         i++;
+//     }
+//     return (0);
+// }
 
-int	ft_env(t_all **all)
-{
-	int i = 0;
+// int	ft_env(t_all **all)
+// {
+// 	int i = 0;
 	
-	while ((*all)->env[i])
-	{
-		ft_putstr((*all)->env[i]);
-		write (1, "\n", 1);
-		i++;
-	}
-	return (0);
-}
+// 	while ((*all)->env[i])
+// 	{
+// 		ft_putstr((*all)->env[i]);
+// 		write (1, "\n", 1);
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
 int is_builtin_2(char **tab, t_all **all)
 {
@@ -304,27 +304,27 @@ int is_builtin_2(char **tab, t_all **all)
 	return (0);
 }
 
-int is_pwd(char *str)
-{
-	if (ft_strcmp(str, "pwd") == 0)
-		return (1);
-	return (0);
-}
+// int is_pwd(char *str)
+// {
+// 	if (ft_strcmp(str, "pwd") == 0)
+// 		return (1);
+// 	return (0);
+// }
 
-int ft_pwd(t_all **all)
-{
-	char cwd[PATH_MAX];
-	if (getcwd(cwd, sizeof(cwd)))
-	{
-		return (printf("%s\n", cwd), 0);
-	}
-	else
-	{
-		perror("pwd: error retrieving current directory: getcwd: cannot access parent directories: ");
-		(*all)->exit_status = 1;
-	}
-	return (1);
-}
+// int ft_pwd(t_all **all)
+// {
+// 	char cwd[PATH_MAX];
+// 	if (getcwd(cwd, sizeof(cwd)))
+// 	{
+// 		return (printf("%s\n", cwd), 0);
+// 	}
+// 	else
+// 	{
+// 		perror("pwd: error retrieving current directory: getcwd: cannot access parent directories: ");
+// 		(*all)->exit_status = 1;
+// 	}
+// 	return (1);
+// }
 
 // int is_cd(char *str)
 // {
